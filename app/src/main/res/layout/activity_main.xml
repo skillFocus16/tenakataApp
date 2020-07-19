@@ -4,34 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.MainActivity">
-
-    <!--<com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <include layout="@layout/toolbar" />
-
-    </com.google.android.material.appbar.AppBarLayout>-->
+    tools:context=".activity.MainActivity"
+    android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_xlarge"
-        android:padding="@dimen/spacing_medium"
-        android:layout_marginRight="@dimen/spacing_large"
-        android:layout_marginLeft="@dimen/spacing_large"
-        android:scrollbars="vertical"
-        android:scrollingCache="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_margin="16dp"
+        android:orientation="vertical"
+        tools:listitem="@layout/recyclerview_student_item" />
 
     <TextView
         android:id="@+id/noContentLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No students availabe."
+        android:text="No students available."
         android:layout_gravity="center"
         android:visibility="gone"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"

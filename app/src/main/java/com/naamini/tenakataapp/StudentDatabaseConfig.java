@@ -1,7 +1,6 @@
 package com.naamini.tenakataapp;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
@@ -43,42 +42,6 @@ public abstract class StudentDatabaseConfig extends RoomDatabase {
         @Override
         public void onOpen(@NonNull SupportSQLiteDatabase db) {
             super.onOpen(db);
-//            new PopulateDbAsync(INSTANCE).execute();
         }
     };
-
-    /**
-     * Populate the database in the background.
-     */
-    private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
-
-        private final StudentDao mDao;
-//        String[] students = {"Naamini", "Frank", "You"};
-
-        PopulateDbAsync(StudentDatabaseConfig db) {
-            mDao = db.studentDao();
-        }
-
-        @Override
-        protected Void doInBackground(final Void... params) {
-            // Start the app with a clean database every time.
-            // Not needed if you only populate the database
-            // when it is first created
-
-           /* mDao.deleteAll();
-            for (int i = 0; i <= students.length - 1; i++) {
-                student student = new student(students[i]);
-                mDao.insert(student);
-            }*/
-
-            // If we have no students, then create the initial list of students
-            /*if (mDao.getAnyStudent().length < 1) {
-                for (int i = 0; i <= students.length - 1; i++) {
-                    Student student = new Student(students[i]);
-                    mDao.insert(student);
-                }
-            }*/
-            return null;
-        }
-    }
 }

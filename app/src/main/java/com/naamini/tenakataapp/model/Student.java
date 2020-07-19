@@ -11,8 +11,9 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "student_table")
 public class Student {
 
-    @PrimaryKey
     public int sID;
+    @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "student")
     public String sName;
     public String sAge;
@@ -22,10 +23,7 @@ public class Student {
     public String sProfileImg;
     public String sIqTest;
 
-    public Student() {
-    }
-
-    public Student(String sName, String sAge, String sMaritalStatus, String sHeight,
+    public Student(@NonNull String sName, String sAge, String sMaritalStatus, String sHeight,
                    String sLocation, String sProfileImg, String sIqTest) {
         this.sName = sName;
         this.sAge = sAge;

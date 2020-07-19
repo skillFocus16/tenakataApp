@@ -1,17 +1,31 @@
 package com.naamini.tenakataapp.activity;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -19,10 +33,22 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.textfield.TextInputEditText;
+import com.naamini.tenakataapp.BuildConfig;
 import com.naamini.tenakataapp.R;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,15 +65,15 @@ public class RegisterStudentActivity extends AppCompatActivity {
     public static final String REPLY_IMG_PATH = "rImage";
     public static String myDateFormat = "yyyy-MM-dd";
 
+    final private int PERMISSION_WRITE_EXTERNAL_CAMERA= 100;
+
     TextInputEditText etfName, etAge, etMStatus,etHeight,etLocation;
     ImageView pImgView;
     Button btnChooseImg,addStudentBtn;
-    private int PICK_IMAGE_REQUEST=123;
-    private Uri imgFilePath;
     String sFName,sAge, sMStatus,sHeight,sLocation;
     private Calendar myCalendar = Calendar.getInstance();
     private DatePickerDialog.OnDateSetListener bDateListener;
-
+    Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +81,9 @@ public class RegisterStudentActivity extends AppCompatActivity {
         initToolbar();
         initComponents();
         handleOnClicks();
+        if (!checkPermission()) {
+            requestPermission();
+        }
     }
 
     @Override
@@ -84,18 +113,20 @@ public class RegisterStudentActivity extends AppCompatActivity {
         btnChooseImg = findViewById(R.id.btnChooseImg);
         addStudentBtn = findViewById(R.id.addStudentBtn);
 
+        intent = getIntent();
+
     }
 
     private void handleOnClicks() {
-         bDateListener = new DatePickerDialog.OnDateSetListener() {
+        /* bDateListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                /*disable future dates*/
+                *//*disable future dates*//*
 //                    datePicker.setMaxDate(System.currentTimeMillis());
-                /*user should be above 18*/
+                *//*user should be above 18*//*
                 Calendar userAge = new GregorianCalendar(year, monthOfYear, dayOfMonth);
                 Calendar minAdultAge = new GregorianCalendar();
                 minAdultAge.add(Calendar.YEAR, -18);
@@ -108,14 +139,16 @@ public class RegisterStudentActivity extends AppCompatActivity {
                     etAge.setText(getString(R.string.invalid_date));
                 } else {
                     Date currentDate = new Date();
+                    Log.e("current date?: ", String.valueOf(currentDate.getYear()));
 //                    int age = currentDate.getYear() - mYear;
-                    int age = Calendar.YEAR - year;
-                    /*date.setText( new StringBuilder().append("The user is ")
-                            .append(age).append(" years old"));*/
-                    SimpleDateFormat sdf = new SimpleDateFormat(myDateFormat, Locale.US);
+                    int age = myCalendar.get(Calendar.YEAR) - currentDate.getYear();//
+                    Log.e("current date?: ", String.valueOf(userAge.getWeekYear())+":"+age);
+                    *//*date.setText( new StringBuilder().append("The user is ")
+                            .append(age).append(" years old"));*//*
+//                    SimpleDateFormat sdf = new SimpleDateFormat(myDateFormat, Locale.US);
                     etAge.setTextColor(getResources().getColor(R.color.design_default_color_on_secondary));
 //                    etAge.setText(sdf.format(myCalendar.getTime()));
-                    etAge.setText(sdf.format(age));
+                    etAge.setText(String.valueOf(age));
                 }
             }
         };
@@ -127,15 +160,36 @@ public class RegisterStudentActivity extends AppCompatActivity {
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
-        });
+        });*/
         btnChooseImg.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
+            public void onClick(final View view) {
+                final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
+                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterStudentActivity.this);
+                builder.setTitle("Add Photo!");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (options[item].equals("Take Photo")) {
+                        }
+                        else if (options[item].equals("Choose from Gallery")) {
+                            Intent intent = new Intent();
+                            intent.setAction(Intent.ACTION_PICK);
+                            intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(intent, 2);
+
+                        }
+                        else if (options[item].equals("Cancel")) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.show();
+               /* Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-            }
+*/            }
         });
         addStudentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,19 +202,35 @@ public class RegisterStudentActivity extends AppCompatActivity {
                     replyIntent.putExtra(REPLY_NAME, sMStatus);
                     replyIntent.putExtra(REPLY_NAME, sHeight);
                     replyIntent.putExtra(REPLY_NAME, sLocation);
-                    replyIntent.putExtra(REPLY_IMG_PATH, imgFilePath);
+                    replyIntent.putExtra(REPLY_IMG_PATH, "NEEEEEMMMMMMYYYYYYYYYYY");
                     replyIntent.putExtra(REPLY_NAME, sFName);
                     setResult(RESULT_OK, replyIntent);
+                    finish();
                 }else {
                     Toast.makeText(RegisterStudentActivity.this, R.string.required_field, Toast.LENGTH_LONG).show();
                 }
-
             }
         });
-
     }
 
-    private boolean validateFields() {
+
+    protected boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+
+    protected void requestPermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+            //Toast.makeText(this, "Write External Storage permission allows us to do store images. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSION_WRITE_EXTERNAL_CAMERA);
+            }
+        }
+    }
+
+     private boolean validateFields() {
         sFName = etfName.getText().toString();
         sAge = etAge.getText().toString();
         sMStatus = etMStatus.getText().toString();
@@ -204,27 +274,13 @@ public class RegisterStudentActivity extends AppCompatActivity {
             etLocation.setError(null);
         }
 
+/*
         if (String.valueOf(imgFilePath).isEmpty()){
             Toast.makeText(RegisterStudentActivity.this, R.string.img_required_field, Toast.LENGTH_LONG).show();
             valid = false;
         }
+*/
         return valid;
-    }
-
-    /*for img pick*/
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null) {
-            imgFilePath = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imgFilePath);
-                pImgView.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public static void setErrorMsg(String msg, EditText viewId) {

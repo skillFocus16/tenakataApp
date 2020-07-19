@@ -33,7 +33,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Age"
-        android:imeOptions="actionNext"/>
+        android:clickable="true"
+        android:imeOptions="actionNext"
+        android:focusable="true" />
     <View
         android:layout_width="0dp"
         android:layout_height="@dimen/spacing_mlarge" />
@@ -50,7 +52,7 @@
         android:id="@+id/etHeight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Heigh"
+        android:hint="Height"
         android:imeOptions="actionNext"/>
     <View
         android:layout_width="0dp"

@@ -15,12 +15,11 @@ import java.util.List;
  */
 @Dao
 public interface StudentDao {
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(Student word);
+    void insert(Student student);
 
     @Query("SELECT * from student_table ORDER BY student ASC")
     LiveData<List<Student>> getAllStudents();
 
-    @Query("SELECT * from student_table LIMIT 1")
-    Student[] getAnyStudent();
 }

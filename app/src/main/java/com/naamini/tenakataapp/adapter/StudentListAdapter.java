@@ -23,8 +23,9 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
     private Context context;
 //    private int animation_type = 0;
 
-    public StudentListAdapter(Context context) {
+    public StudentListAdapter(Context context,List<Student> students ) {
         mInflater = LayoutInflater.from(context);
+        this.mStudents =students;
         this.context = context;
 //        this.animation_type=animation_type;
     }
@@ -40,9 +41,9 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
     public void onBindViewHolder(@NonNull StudentViewHolder holder, final int position) {
         if (mStudents != null) {
            final Student currentStudent = mStudents.get(position);
-            Log.e("currentStudent?: ", currentStudent.toString());
+            Log.e("currentStudent?: ", currentStudent.getsName()+"::"+currentStudent.getsAge());
             holder.studentName.setText(position +" | "+currentStudent.getsName());
-            holder.itemViewDesc.setText(currentStudent.getsAge());
+            holder.itemViewDesc.setText(currentStudent.getsMaritalStatus());
         } else {
             // Covers the case of data not being ready yet.
             holder.studentName.setText("No Student");
@@ -58,8 +59,8 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
         });
     }
 
-    public void setStudents(List<Student> students){
-        mStudents = students;
+    public void setStudents(List<Student> studentList){
+        mStudents = studentList;
         notifyDataSetChanged();
     }
 
