@@ -20,7 +20,7 @@
             android:layout_marginLeft="@dimen/spacing_large"
             android:layout_marginRight="@dimen/spacing_large"
             android:layout_marginTop="@dimen/spacing_middle"
-            android:contentDescription="@string/app_name"/>
+            android:contentDescription="@string/app_name" />
 
         <View
             android:layout_width="@dimen/spacing_medium"
@@ -44,7 +44,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/spacing_middle"
                     android:layout_marginRight="@dimen/spacing_middle"
-                    android:text="Naamini"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="@android:color/darker_gray" />
 
@@ -56,9 +55,19 @@
                     android:layout_marginRight="@dimen/spacing_middle"
                     android:layout_marginTop="@dimen/spacing_medium"
                     android:maxLines="2"
-                    android:text="This is me"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textColor="@android:color/darker_gray" />
+                    android:textColor="@android:color/holo_red_dark" />
+
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/spacing_middle"
+                    android:layout_marginRight="@dimen/spacing_middle"
+                    android:layout_marginTop="@dimen/spacing_medium"
+                    android:maxLines="2"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="@android:color/holo_red_dark" />
 
             </LinearLayout>
 

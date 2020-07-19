@@ -30,7 +30,10 @@ public class StudentRepository {
     }
 
     public void insert (Student student){
-        new insertAsyncTask(mStudentDao).execute(student);
+//        new insertAsyncTask(mStudentDao).execute(student);
+        StudentDatabaseConfig.databaseWriteExecutor.execute(()->{
+            mStudentDao.insert(student);
+        });
     }
 
 

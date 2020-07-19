@@ -2,7 +2,6 @@ package com.naamini.tenakataapp.model;
 
 import android.app.Application;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
@@ -17,7 +16,7 @@ public class StudentViewModel extends AndroidViewModel {
     private StudentRepository mRepository;
     private LiveData<List<Student>> mAllStudents;
 
-    public StudentViewModel(@NonNull Application application) {
+    public StudentViewModel(Application application) {
         super(application);
         mRepository = new StudentRepository(application);
         mAllStudents = mRepository.getAllStudents();

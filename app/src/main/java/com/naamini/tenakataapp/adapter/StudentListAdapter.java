@@ -2,7 +2,6 @@ package com.naamini.tenakataapp.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.naamini.tenakataapp.R;
+import com.naamini.tenakataapp.activity.MainActivity;
 import com.naamini.tenakataapp.activity.RegisterStudentActivity;
 import com.naamini.tenakataapp.model.Student;
 
@@ -41,9 +41,9 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
     public void onBindViewHolder(@NonNull StudentViewHolder holder, final int position) {
         if (mStudents != null) {
            final Student currentStudent = mStudents.get(position);
-            Log.e("currentStudent?: ", currentStudent.getsName()+"::"+currentStudent.getsAge());
             holder.studentName.setText(position +" | "+currentStudent.getsName());
-            holder.itemViewDesc.setText(currentStudent.getsMaritalStatus());
+            holder.itemViewDesc.setText("NE:"+currentStudent.getsLocation());
+            holder.status.setText("NE:"+currentStudent.getsCreatedOn());
         } else {
             // Covers the case of data not being ready yet.
             holder.studentName.setText("No Student");
@@ -52,10 +52,10 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
         holder.studentName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(context, RegisterStudentActivity.class);
+              /*  Intent i = new Intent(context, RegisterStudentActivity.class);
                 i.putExtra("studentName", mStudents.get(position).getsName());
                 context.startActivity(i);
-            }
+*/            }
         });
     }
 
@@ -74,17 +74,20 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
     public int getItemCount() {
         if (mStudents != null)
             return mStudents.size();
-        else return 0;
+        else{
+//            ((MainActivity)context).noContentLayout.setVisibility(View.VISIBLE);
+            return 0;
+        }
     }
 
     public class StudentViewHolder extends RecyclerView.ViewHolder {
-        public final TextView studentName;
-        public final TextView itemViewDesc;
+        public final TextView studentName,itemViewDesc, status;
 
         private StudentViewHolder(View itemView) {
             super(itemView);
             studentName = itemView.findViewById(R.id.studentName);
             itemViewDesc = itemView.findViewById(R.id.description);
+            status = itemView.findViewById(R.id.status);
         }
     }
 }

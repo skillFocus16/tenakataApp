@@ -1,19 +1,15 @@
 package com.naamini.tenakataapp.activity;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.naamini.tenakataapp.R;
@@ -22,13 +18,19 @@ import com.naamini.tenakataapp.model.Student;
 import com.naamini.tenakataapp.model.StudentViewModel;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
+
+import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_AGE;
+import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_HEIGHT;
+import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_LOCATION;
+import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_NAME;
+import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_STATUS;
 
 public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton fabNewBtn;
     RecyclerView recyclerView;
-    TextView noContentLayout;
+    public TextView noContentLayout;
 
     private StudentViewModel mStudentViewModel;
     private int NEW_STUDENT_ACTIVITY_REQUEST_CODE=1;
@@ -62,13 +64,10 @@ public class MainActivity extends AppCompatActivity {
 
 //        mStudentViewModel = ViewModelProviders.of(this).get(StudentViewModel.class);
         mStudentViewModel = new ViewModelProvider(MainActivity.this).get(StudentViewModel.class);
-        mStudentViewModel.getAllStudents().observe(MainActivity.this, new Observer<List<Student>>() {
-            @Override
-            public void onChanged(@Nullable final List<Student> students) {
-                // Update the cached copy of the words in the adapter.
+        mStudentViewModel.getAllStudents().observe(MainActivity.this, students -> {
+            // Update the cached copy of the words in the adapter.
                 adapter.setStudents(students);
                 adapter.notifyDataSetChanged();
-            }
         });
     }
 
@@ -85,13 +84,21 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == NEW_STUDENT_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            Student s = new Student(data.getStringExtra(RegisterStudentActivity.REPLY_NAME),
-                    data.getStringExtra(RegisterStudentActivity.REPLY_AGE),
-                    data.getStringExtra(RegisterStudentActivity.REPLY_STATUS),
-                    data.getStringExtra(RegisterStudentActivity.REPLY_HEIGHT),
-                    data.getStringExtra(RegisterStudentActivity.REPLY_LOCATION),
-                    data.getStringExtra(RegisterStudentActivity.REPLY_IMG_PATH),
-                    data.getStringExtra(RegisterStudentActivity.REPLY_NAME));
+            /*Student s = new Student(data.getStringExtra(REPLY_NAME),
+                    data.getStringExtra(REPLY_AGE ),
+                    data.getStringExtra(REPLY_STATUS),
+                    data.getStringExtra(REPLY_HEIGHT),
+                    data.getStringExtra(REPLY_LOCATION),
+                    data.getStringExtra(REPLY_IMG_PATH),
+                    data.getStringExtra(REPLY_NAME));*/
+            Student s = new Student();
+            s.setsName(REPLY_NAME);
+            s.setsAge(REPLY_AGE);
+            s.setsMaritalStatus(REPLY_STATUS);
+            s.setsHeight(REPLY_HEIGHT);
+            s.setsLocation(REPLY_LOCATION);
+            s.setsProfileImg("NEMMMMMMMMMY");
+            s.setsCreatedOn(String.valueOf(new Date()));
             mStudentViewModel.insert(s);
             Toast.makeText(MainActivity.this, "SAVED!", Toast.LENGTH_LONG).show();
         } else {

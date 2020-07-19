@@ -36,7 +36,6 @@ public class SplashScreenActivity extends Activity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private void initComponents() {
@@ -44,7 +43,7 @@ public class SplashScreenActivity extends Activity {
         splashLayout = findViewById(R.id.splashLayout);
 
         Glide.with(SplashScreenActivity.this)
-                .load(R.drawable.ic_launcher_background)
+                .load(R.mipmap.ic_tenakata_logo)
                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                 .apply(RequestOptions.overrideOf(500, 500))
                 .apply(RequestOptions.placeholderOf(R.color.colorPrimary))

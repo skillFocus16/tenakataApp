@@ -11,13 +11,20 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.naamini.tenakataapp.dao.StudentDao;
 import com.naamini.tenakataapp.model.Student;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * Created by Naamini Yonazi on 19/07/20
  */
 @Database(entities = {Student.class}, version = 1, exportSchema = false)
 public abstract class StudentDatabaseConfig extends RoomDatabase {
+
     private static StudentDatabaseConfig INSTANCE;
     public abstract StudentDao studentDao();
+    private static final int NUMBER_OF_THREADS = 4;
+    public static final ExecutorService databaseWriteExecutor =
+            Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     public static StudentDatabaseConfig getDatabase(final Context context) {
         if (INSTANCE == null) {

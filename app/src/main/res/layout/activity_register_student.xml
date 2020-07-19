@@ -33,6 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Age"
+        android:inputType="number"
         android:clickable="true"
         android:imeOptions="actionNext"
         android:focusable="true" />
@@ -52,7 +53,7 @@
         android:id="@+id/etHeight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Height"
+        android:hint="Height (cm)"
         android:imeOptions="actionNext"/>
     <View
         android:layout_width="0dp"
@@ -62,7 +63,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Current Location"
-        android:imeOptions="actionNext"/>
+        android:imeOptions="actionDone"/>
 
     <LinearLayout
         android:id="@+id/layout_button"
@@ -94,16 +95,11 @@
             android:layout_marginTop="@dimen/spacing_small"
             android:layout_gravity="center"
             android:contentDescription="@string/app_name"/>
-
     </LinearLayout>
-
-
 
     <View
         android:layout_width="0dp"
         android:layout_height="@dimen/spacing_mlarge" />
-
-
     <Button
         android:id="@+id/addStudentBtn"
         android:layout_width="match_parent"
