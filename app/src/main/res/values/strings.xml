@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">TenakataApp</string>
+    <string name="required_field">This field is required</string>
+    <string name="img_required_field">Your profile image is required</string>
+    <string name="invalid_date">Invalid Date</string>
+    <string name="title_activity_splash_screen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
