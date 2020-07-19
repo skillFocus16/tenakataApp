@@ -23,8 +23,48 @@
         android:id="@+id/etfName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Full Name"
+        android:hint="@string/full_name"
         android:imeOptions="actionNext"/>
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/spacing_mlarge" />
+        <!--Gender-->
+        <RadioGroup
+            android:id="@+id/radioGrp"
+            android:gravity="center_vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:drawablePadding="8dp"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gender"
+                android:textSize="17sp"/>
+
+            <RadioButton
+                android:id="@+id/radioM"
+                android:layout_width="0dp"
+                android:buttonTint="@color/colorPrimaryDark"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:checked="false"
+                android:layout_weight="1"
+                android:text="@string/male"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp" />
+            <RadioButton
+                android:id="@+id/radioF"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/colorPrimaryDark"
+                android:layout_gravity="end"
+                android:checked="false"
+                android:layout_weight="1"
+                android:text="@string/female" />
+        </RadioGroup>
     <View
         android:layout_width="0dp"
         android:layout_height="@dimen/spacing_mlarge" />
@@ -32,7 +72,7 @@
         android:id="@+id/etAge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Age"
+        android:hint="@string/age"
         android:inputType="number"
         android:clickable="true"
         android:imeOptions="actionNext"
@@ -44,7 +84,7 @@
         android:id="@+id/etMStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Marital Status"
+        android:hint="@string/marital_status"
         android:imeOptions="actionNext"/>
     <View
         android:layout_width="0dp"
@@ -53,7 +93,8 @@
         android:id="@+id/etHeight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Height (cm)"
+        android:inputType="number"
+        android:hint="@string/height_cm"
         android:imeOptions="actionNext"/>
     <View
         android:layout_width="0dp"
@@ -63,16 +104,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:hint="IQ"
+        android:hint="@string/iq"
         android:imeOptions="actionNext"/>
     <View
         android:layout_width="0dp"
         android:layout_height="@dimen/spacing_mlarge" />
+
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/etLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Current Location"
+        android:hint="@string/current_location"
         android:imeOptions="actionDone"/>
 
     <LinearLayout
@@ -88,7 +130,7 @@
             android:id="@+id/btnChooseImg"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Choose Profile"
+            android:text="@string/take_a_picture"
             android:layout_weight="1"
             android:clickable="true"
             android:focusable="true"
@@ -115,7 +157,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAllCaps="true"
-        android:text="Register" />
+        android:text="@string/register" />
 
     <View
         android:layout_width="0dp"

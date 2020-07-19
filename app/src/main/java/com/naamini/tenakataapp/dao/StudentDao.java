@@ -19,7 +19,7 @@ public interface StudentDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(Student student);
 
-    @Query("SELECT * from student_table ORDER BY dateCreated DESC")//ORDER BY student ASC")
+    @Query("SELECT * from student_table ORDER BY sID DESC")//ORDER BY student ASC")
     LiveData<List<Student>> getAllStudents();
 
     @Query("SELECT * from student_table WHERE iq > :iq")

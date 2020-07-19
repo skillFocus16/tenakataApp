@@ -12,7 +12,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.naamini.tenakataapp.R;
-
+/**
+ * Created by Naamini Yonazi on 19/07/20
+ */
 public class SplashScreenActivity extends Activity {
 
     private final int SPLASH_TIME_OUT = 2000;
@@ -43,7 +45,7 @@ public class SplashScreenActivity extends Activity {
         splashLayout = findViewById(R.id.splashLayout);
 
         Glide.with(SplashScreenActivity.this)
-                .load(R.mipmap.ic_tenakata_logo)
+                .load(R.drawable.tenakata_logo)
                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                 .apply(RequestOptions.overrideOf(500, 500))
                 .apply(RequestOptions.placeholderOf(R.color.colorPrimary))
@@ -65,10 +67,8 @@ public class SplashScreenActivity extends Activity {
                 } finally {
                     finish();
                 }
-
             }
         };
         splashTread.start();
-
     }
 }

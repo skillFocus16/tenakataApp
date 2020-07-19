@@ -18,6 +18,8 @@ public class Student {
     @NonNull
     @ColumnInfo(name = "student")
     public String sName;
+    @ColumnInfo(name = "gender")
+    public String gender;
     @ColumnInfo(name = "age")
     public String sAge;
     @ColumnInfo(name = "marital_status")
@@ -32,24 +34,22 @@ public class Student {
     public String sIqTest;
     @ColumnInfo(name = "admissibility")
     public String sAdmissibility;
-    @ColumnInfo(name = "dateCreated")
-    public String sCreatedOn;
+
 
     @Ignore
     public Student() {
     }
 
-    public Student(@NonNull String sName,  String sAge,  String sMaritalStatus,
-                    String sHeight,  String sLocation, String sProfileImg,
-                    String sIqTest,  String sCreatedOn) {
+    public Student(@NonNull String sName, String gender, String sAge, String sMaritalStatus, String sHeight,
+                   String sLocation, String sProfileImg, String sIqTest) {
         this.sName = sName;
+        this.gender = gender;
         this.sAge = sAge;
         this.sMaritalStatus = sMaritalStatus;
         this.sHeight = sHeight;
         this.sLocation = sLocation;
         this.sProfileImg = sProfileImg;
         this.sIqTest = sIqTest;
-        this.sCreatedOn = sCreatedOn;
     }
 
     public int getsID() {
@@ -70,6 +70,14 @@ public class Student {
     }
 
 
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
     public String getsAge() {
         return sAge;
     }
@@ -77,8 +85,7 @@ public class Student {
     public void setsAge( String sAge) {
         this.sAge = sAge;
     }
-
-
+    
     public String getsMaritalStatus() {
         return sMaritalStatus;
     }
@@ -86,7 +93,6 @@ public class Student {
     public void setsMaritalStatus( String sMaritalStatus) {
         this.sMaritalStatus = sMaritalStatus;
     }
-
 
     public String getsHeight() {
         return sHeight;
@@ -128,13 +134,5 @@ public class Student {
 
     public void setsAdmissibility(String sAdmissibility) {
         this.sAdmissibility = sAdmissibility;
-    }
-
-    public String getsCreatedOn() {
-        return sCreatedOn;
-    }
-
-    public void setsCreatedOn(String sCreatedOn) {
-        this.sCreatedOn = sCreatedOn;
     }
 }

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_AGE;
-import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_DATE;
+import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_GENDER;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_HEIGHT;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_IQ;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_LOCATION;
@@ -87,13 +87,13 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == NEW_STUDENT_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             Student s = new Student(data.getStringExtra(REPLY_NAME),
+                    data.getStringExtra(REPLY_GENDER ),
                     data.getStringExtra(REPLY_AGE ),
                     data.getStringExtra(REPLY_STATUS),
                     data.getStringExtra(REPLY_HEIGHT),
                     data.getStringExtra(REPLY_LOCATION),
                     data.getStringExtra("NEMMMYYYYYYYYYYY"),
-                    data.getStringExtra(REPLY_IQ),
-                    data.getStringExtra(REPLY_DATE)
+                    data.getStringExtra(REPLY_IQ)
                     );
             /*Student s = new Student();
             s.setsName(REPLY_NAME);

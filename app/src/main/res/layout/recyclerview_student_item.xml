@@ -56,7 +56,7 @@
                     android:layout_marginTop="@dimen/spacing_medium"
                     android:maxLines="2"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textColor="@android:color/holo_red_dark" />
+                    android:textColor="@android:color/darker_gray" />
 
                 <TextView
                     android:id="@+id/status"

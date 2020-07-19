@@ -24,6 +24,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -37,33 +39,41 @@ import com.naamini.tenakataapp.R;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class RegisterStudentActivity extends AppCompatActivity {
 
     public static final String REPLY_NAME = "rName";
+    public static final String REPLY_GENDER = "rGender";
     public static final String REPLY_AGE = "rAge";
     public static final String REPLY_STATUS = "rStatus";
     public static final String REPLY_HEIGHT = "rHeight";
     public static final String REPLY_LOCATION = "rLocation";
     public static final String REPLY_IMG_PATH = "rImage";
     public static final String REPLY_IQ = "rIq";
-    public static final String REPLY_DATE = "rDate";
-    public static String myDateFormat = "yyyy-MM-dd";
-
-    final private int PERMISSION_WRITE_EXTERNAL_CAMERA= 100;
     private static final int REQUEST_LOCATION = 101;
-
-    TextInputEditText etfName, etAge, etMStatus,etHeight,etIQ,etLocation;
+    public static String myDateFormat = "yyyy-MM-dd";
+    final private int PERMISSION_WRITE_EXTERNAL_CAMERA = 100;
+    TextInputEditText etfName, etAge, etMStatus, etHeight, etIQ, etLocation;
     ImageView pImgView;
-    Button btnChooseImg,addStudentBtn;
-    String sFName,sAge, sMStatus,sHeight,sIQ,sLocation;
-    double lat,lon;
+    RadioGroup radioGroup;
+    RadioButton radioFemale, radioMale;
+    Button btnChooseImg, addStudentBtn;
+    String sFName, sAge, sMStatus, sHeight, sIQ, sLocation, sGender;
+    double lat, lon;
+    Intent intent;
     private Calendar myCalendar = Calendar.getInstance();
     private DatePickerDialog.OnDateSetListener bDateListener;
-    Intent intent;
     private LocationManager locationManager;
+
+    public static void setErrorMsg(String msg, EditText viewId) {
+        int ecolor = Color.WHITE;
+        String estring = msg;
+        ForegroundColorSpan fgcspan = new ForegroundColorSpan(ecolor);
+        SpannableStringBuilder sbuilder = new SpannableStringBuilder(estring);
+        sbuilder.setSpan(fgcspan, 0, estring.length(), 0);
+        viewId.setError(sbuilder);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +109,10 @@ public class RegisterStudentActivity extends AppCompatActivity {
         etHeight = findViewById(R.id.etHeight);
         etIQ = findViewById(R.id.etIQ);
         etLocation = findViewById(R.id.etLocation);
+
+        radioGroup = findViewById(R.id.radioGrp);
+        radioFemale = findViewById(R.id.radioF);
+        radioMale = findViewById(R.id.radioM);
 
         pImgView = findViewById(R.id.pImgView);
 
@@ -156,22 +170,20 @@ public class RegisterStudentActivity extends AppCompatActivity {
         btnChooseImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
+                final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(RegisterStudentActivity.this);
                 builder.setTitle("Add Photo!");
                 builder.setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
                         if (options[item].equals("Take Photo")) {
-                        }
-                        else if (options[item].equals("Choose from Gallery")) {
+                        } else if (options[item].equals("Choose from Gallery")) {
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_PICK);
                             intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                             startActivityForResult(intent, 2);
 
-                        }
-                        else if (options[item].equals("Cancel")) {
+                        } else if (options[item].equals("Cancel")) {
                             dialog.dismiss();
                         }
                     }
@@ -181,26 +193,27 @@ public class RegisterStudentActivity extends AppCompatActivity {
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-*/            }
+*/
+            }
         });
         addStudentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (validateFields()){
+                if (validateFields()) {
                     //write new student
                     Intent replyIntent = new Intent();
                     replyIntent.putExtra(REPLY_NAME, sFName);
+                    replyIntent.putExtra(REPLY_GENDER, sGender);
                     replyIntent.putExtra(REPLY_AGE, sAge);
                     replyIntent.putExtra(REPLY_STATUS, sMStatus);
                     replyIntent.putExtra(REPLY_HEIGHT, sHeight);
                     replyIntent.putExtra(REPLY_LOCATION, sLocation);
                     replyIntent.putExtra(REPLY_IMG_PATH, "NEEEEEMMMMMMYYYYYYYYYYY");
                     replyIntent.putExtra(REPLY_IQ, sIQ);
-                    replyIntent.putExtra(REPLY_DATE, new Date());
 
                     setResult(RESULT_OK, replyIntent);
                     finish();
-                }else {
+                } else {
                     Toast.makeText(RegisterStudentActivity.this, R.string.required_field, Toast.LENGTH_LONG).show();
                 }
             }
@@ -221,7 +234,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
 
     private void OnGPS() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Enable GPS").setCancelable(false).setPositiveButton("Yes", new  DialogInterface.OnClickListener() {
+        builder.setMessage("Enable GPS").setCancelable(false).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
@@ -236,7 +249,6 @@ public class RegisterStudentActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-
     private void getLocation() {//this method works so well
         if (ActivityCompat.checkSelfPermission(
                 RegisterStudentActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
@@ -250,13 +262,17 @@ public class RegisterStudentActivity extends AppCompatActivity {
             Location location = locationManager.getLastKnownLocation(bestProvider);
             LocationListener loc_listener = new LocationListener() {
 
-                public void onLocationChanged(Location l) {}
+                public void onLocationChanged(Location l) {
+                }
 
-                public void onProviderEnabled(String p) {}
+                public void onProviderEnabled(String p) {
+                }
 
-                public void onProviderDisabled(String p) {}
+                public void onProviderDisabled(String p) {
+                }
 
-                public void onStatusChanged(String p, int status, Bundle extras) {}
+                public void onStatusChanged(String p, int status, Bundle extras) {
+                }
             };
             locationManager.requestLocationUpdates(bestProvider, 0, 0, loc_listener);
             location = locationManager.getLastKnownLocation(bestProvider);
@@ -264,10 +280,10 @@ public class RegisterStudentActivity extends AppCompatActivity {
                 lat = location.getLatitude();
                 lon = location.getLongitude();
                 Log.e("latts?: ", String.valueOf(lat));
-                List<Address> addresss= null;
+                List<Address> addresss = null;
                 try {
 //                    addresss = gcd.getFromLocation(lat,lon,1);
-                    addresss = gcd.getFromLocation(-1.328664, 36.833734,1);//KE codes
+                    addresss = gcd.getFromLocation(-1.328664, 36.833734, 1);//KE codes
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -298,13 +314,20 @@ public class RegisterStudentActivity extends AppCompatActivity {
         }
     }
 
-     private boolean validateFields() {
+    private boolean validateFields() {
         sFName = etfName.getText().toString();
         sAge = etAge.getText().toString();
         sMStatus = etMStatus.getText().toString();
         sHeight = etHeight.getText().toString();
         sIQ = etIQ.getText().toString();
-        sLocation= etLocation.getText().toString();
+        sLocation = etLocation.getText().toString();
+
+        int selectedId = radioGroup.getCheckedRadioButtonId();
+        if (selectedId == radioFemale.getId()) {
+            sGender = radioFemale.getText().toString();
+        } else {
+            sGender = radioMale.getText().toString();
+        }
 
         boolean valid = true;
 
@@ -342,13 +365,21 @@ public class RegisterStudentActivity extends AppCompatActivity {
             etIQ.setError(null);
         }
 
-        if (sLocation.isEmpty() ) {
+        if (sLocation.isEmpty()) {
             setErrorMsg(getString(R.string.required_field), etLocation);
             valid = false;
         } else {
             etLocation.setError(null);
         }
 
+        if ((radioGroup.getCheckedRadioButtonId() == -1)) {
+            radioMale.setError("Choose gender");
+            radioFemale.setError("Choose gender");
+            valid = false;
+        } else {
+            radioMale.setError(null);
+            radioFemale.setError(null);
+        }
 /*
         if (String.valueOf(imgFilePath).isEmpty()){
             Toast.makeText(RegisterStudentActivity.this, R.string.img_required_field, Toast.LENGTH_LONG).show();
@@ -356,15 +387,6 @@ public class RegisterStudentActivity extends AppCompatActivity {
         }
 */
         return valid;
-    }
-
-    public static void setErrorMsg(String msg, EditText viewId) {
-        int ecolor = Color.WHITE;
-        String estring = msg;
-        ForegroundColorSpan fgcspan = new ForegroundColorSpan(ecolor);
-        SpannableStringBuilder sbuilder = new SpannableStringBuilder(estring);
-        sbuilder.setSpan(fgcspan, 0, estring.length(), 0);
-        viewId.setError(sbuilder);
     }
 
 }
