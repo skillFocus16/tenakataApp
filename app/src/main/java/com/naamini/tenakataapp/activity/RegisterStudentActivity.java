@@ -190,10 +190,10 @@ public class RegisterStudentActivity extends AppCompatActivity {
                     //write new student
                     Intent replyIntent = new Intent();
                     replyIntent.putExtra(REPLY_NAME, sFName);
-                    replyIntent.putExtra(REPLY_NAME, sAge);
-                    replyIntent.putExtra(REPLY_NAME, sMStatus);
-                    replyIntent.putExtra(REPLY_NAME, sHeight);
-                    replyIntent.putExtra(REPLY_NAME, sLocation);
+                    replyIntent.putExtra(REPLY_AGE, sAge);
+                    replyIntent.putExtra(REPLY_STATUS, sMStatus);
+                    replyIntent.putExtra(REPLY_HEIGHT, sHeight);
+                    replyIntent.putExtra(REPLY_LOCATION, sLocation);
                     replyIntent.putExtra(REPLY_IMG_PATH, "NEEEEEMMMMMMYYYYYYYYYYY");
                     replyIntent.putExtra(REPLY_IQ, sIQ);
                     replyIntent.putExtra(REPLY_DATE, new Date());

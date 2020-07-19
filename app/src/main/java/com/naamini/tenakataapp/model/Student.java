@@ -42,7 +42,6 @@ public class Student {
     public Student(@NonNull String sName,  String sAge,  String sMaritalStatus,
                     String sHeight,  String sLocation, String sProfileImg,
                     String sIqTest,  String sCreatedOn) {
-        this.sID = sID;
         this.sName = sName;
         this.sAge = sAge;
         this.sMaritalStatus = sMaritalStatus;
@@ -50,7 +49,6 @@ public class Student {
         this.sLocation = sLocation;
         this.sProfileImg = sProfileImg;
         this.sIqTest = sIqTest;
-        this.sAdmissibility = sAdmissibility;
         this.sCreatedOn = sCreatedOn;
     }
 
