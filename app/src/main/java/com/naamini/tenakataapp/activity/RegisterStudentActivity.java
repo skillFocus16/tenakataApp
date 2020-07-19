@@ -10,6 +10,7 @@ import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,11 +18,19 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Base64;
@@ -53,6 +62,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 
 public class RegisterStudentActivity extends AppCompatActivity {
@@ -66,14 +76,18 @@ public class RegisterStudentActivity extends AppCompatActivity {
     public static String myDateFormat = "yyyy-MM-dd";
 
     final private int PERMISSION_WRITE_EXTERNAL_CAMERA= 100;
+    private static final int REQUEST_LOCATION = 101;
 
     TextInputEditText etfName, etAge, etMStatus,etHeight,etLocation;
     ImageView pImgView;
     Button btnChooseImg,addStudentBtn;
     String sFName,sAge, sMStatus,sHeight,sLocation;
+    double lat,lon;
     private Calendar myCalendar = Calendar.getInstance();
     private DatePickerDialog.OnDateSetListener bDateListener;
     Intent intent;
+    private LocationManager locationManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -211,8 +225,93 @@ public class RegisterStudentActivity extends AppCompatActivity {
                 }
             }
         });
+
+        etLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    OnGPS();
+                } else {
+                    getLocation();
+                }
+            }
+        });
     }
 
+    private void OnGPS() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Enable GPS").setCancelable(false).setPositiveButton("Yes", new  DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            }
+        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void getLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                RegisterStudentActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                RegisterStudentActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else {
+           /* Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (locationGPS != null) {
+                double lat = locationGPS.getLatitude();
+                double longi = locationGPS.getLongitude();
+                latitude = String.valueOf(lat);
+                longitude = String.valueOf(lat);
+
+                etLocation.setText("Your Location: " + "\n" + "Latitude: " + String.valueOf(lat) + "\n" + "Longitude: " + String.valueOf(lat));
+            } else {
+                Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show();
+            }*/
+            Geocoder gcd = new Geocoder(RegisterStudentActivity.this);
+            LocationManager locationManager = (LocationManager)
+                    getSystemService(LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+            String bestProvider = locationManager.getBestProvider(criteria, false);
+            Location location = locationManager.getLastKnownLocation(bestProvider);
+            LocationListener loc_listener = new LocationListener() {
+
+                public void onLocationChanged(Location l) {}
+
+                public void onProviderEnabled(String p) {}
+
+                public void onProviderDisabled(String p) {}
+
+                public void onStatusChanged(String p, int status, Bundle extras) {}
+            };
+            locationManager.requestLocationUpdates(bestProvider, 0, 0, loc_listener);
+            location = locationManager.getLastKnownLocation(bestProvider);
+            try {
+                lat = location.getLatitude();
+                lon = location.getLongitude();
+                Log.e("latts?: ", String.valueOf(lat));
+                List<Address> addresss= null;
+                try {
+//                    addresss = gcd.getFromLocation(lat,lon,1);
+                    addresss = gcd.getFromLocation(-1.328664, 36.833734,1);//KE codes
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                String code = addresss.get(0).getCountryCode();
+                Log.e("codeeee?: ", String.valueOf(code));
+                etLocation.setText(code);
+
+            } catch (NullPointerException e) {
+                lat = -1.0;
+                lon = -1.0;
+            }
+        }
+    }
 
     protected boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
