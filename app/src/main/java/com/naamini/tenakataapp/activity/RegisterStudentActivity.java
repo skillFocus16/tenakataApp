@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -54,16 +55,16 @@ public class RegisterStudentActivity extends AppCompatActivity {
     private static final int REQUEST_LOCATION = 101;
     public static String myDateFormat = "yyyy-MM-dd";
     final private int PERMISSION_WRITE_EXTERNAL_CAMERA = 100;
+
     TextInputEditText etfName, etAge, etMStatus, etHeight, etIQ, etLocation;
     ImageView pImgView;
+    ImageButton getMap;
     RadioGroup radioGroup;
     RadioButton radioFemale, radioMale;
     Button btnChooseImg, addStudentBtn;
     String sFName, sAge, sMStatus, sHeight, sIQ, sLocation, sGender;
     double lat, lon;
     Intent intent;
-    private Calendar myCalendar = Calendar.getInstance();
-    private DatePickerDialog.OnDateSetListener bDateListener;
     private LocationManager locationManager;
 
     public static void setErrorMsg(String msg, EditText viewId) {
@@ -110,6 +111,8 @@ public class RegisterStudentActivity extends AppCompatActivity {
         etIQ = findViewById(R.id.etIQ);
         etLocation = findViewById(R.id.etLocation);
 
+        getMap=findViewById(R.id.getMap);
+
         radioGroup = findViewById(R.id.radioGrp);
         radioFemale = findViewById(R.id.radioF);
         radioMale = findViewById(R.id.radioM);
@@ -124,49 +127,17 @@ public class RegisterStudentActivity extends AppCompatActivity {
     }
 
     private void handleOnClicks() {
-        /* bDateListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH, monthOfYear);
-                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                *//*disable future dates*//*
-//                    datePicker.setMaxDate(System.currentTimeMillis());
-                *//*user should be above 18*//*
-                Calendar userAge = new GregorianCalendar(year, monthOfYear, dayOfMonth);
-                Calendar minAdultAge = new GregorianCalendar();
-                minAdultAge.add(Calendar.YEAR, -18);
-
-                if (minAdultAge.before(userAge)) {
-                    etAge.setTextColor(Color.RED);
-                    etAge.setText(getString(R.string.invalid_date));
-                } else if (myCalendar.after(System.currentTimeMillis())) {
-                    etAge.setTextColor(Color.RED);
-                    etAge.setText(getString(R.string.invalid_date));
-                } else {
-                    Date currentDate = new Date();
-                    Log.e("current date?: ", String.valueOf(currentDate.getYear()));
-//                    int age = currentDate.getYear() - mYear;
-                    int age = myCalendar.get(Calendar.YEAR) - currentDate.getYear();//
-                    Log.e("current date?: ", String.valueOf(userAge.getWeekYear())+":"+age);
-                    *//*date.setText( new StringBuilder().append("The user is ")
-                            .append(age).append(" years old"));*//*
-//                    SimpleDateFormat sdf = new SimpleDateFormat(myDateFormat, Locale.US);
-                    etAge.setTextColor(getResources().getColor(R.color.design_default_color_on_secondary));
-//                    etAge.setText(sdf.format(myCalendar.getTime()));
-                    etAge.setText(String.valueOf(age));
-                }
-            }
-        };
-
-        etAge.setOnClickListener(new View.OnClickListener() {
+        getMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(RegisterStudentActivity.this, bDateListener, myCalendar
-                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    OnGPS();
+                } else {
+                    getLocation();
+                }
             }
-        });*/
+        });
         btnChooseImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
@@ -215,18 +186,6 @@ public class RegisterStudentActivity extends AppCompatActivity {
                     finish();
                 } else {
                     Toast.makeText(RegisterStudentActivity.this, R.string.required_field, Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        etLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    OnGPS();
-                } else {
-                    getLocation();
                 }
             }
         });
@@ -279,18 +238,17 @@ public class RegisterStudentActivity extends AppCompatActivity {
             try {
                 lat = location.getLatitude();
                 lon = location.getLongitude();
-                Log.e("latts?: ", String.valueOf(lat));
                 List<Address> addresss = null;
                 try {
-//                    addresss = gcd.getFromLocation(lat,lon,1);
-                    addresss = gcd.getFromLocation(-1.328664, 36.833734, 1);//KE codes
+                    addresss = gcd.getFromLocation(lat,lon,1);
+//                    addresss = gcd.getFromLocation(-1.328664, 36.833734, 1);//KE codes
+
+                    String code = addresss.get(0).getCountryCode();
+                    Log.e("codeeee?: ", String.valueOf(code));
+                    etLocation.setText(code);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                String code = addresss.get(0).getCountryCode();
-                Log.e("codeeee?: ", String.valueOf(code));
-                etLocation.setText(code);
-
             } catch (NullPointerException e) {
                 lat = -1.0;
                 lon = -1.0;

@@ -85,7 +85,7 @@ public class Student {
     public void setsAge( String sAge) {
         this.sAge = sAge;
     }
-    
+
     public String getsMaritalStatus() {
         return sMaritalStatus;
     }

@@ -110,12 +110,28 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/spacing_mlarge" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/etLocation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/current_location"
-        android:imeOptions="actionDone"/>
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="horizontal">
+       <com.google.android.material.textfield.TextInputEditText
+           android:id="@+id/etLocation"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:hint="@string/current_location"
+           android:enabled="false"
+           android:layout_weight="1"
+           android:imeOptions="actionDone"/>
+       <ImageButton
+           android:id="@+id/getMap"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:tint="@color/colorPrimaryDark"
+           android:clickable="true"
+           android:focusable="true"
+           android:src="@android:drawable/ic_dialog_map"
+           android:contentDescription="@string/app_name"/>
+   </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layout_button"
