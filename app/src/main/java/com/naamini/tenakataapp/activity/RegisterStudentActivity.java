@@ -37,6 +37,7 @@ import com.naamini.tenakataapp.R;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class RegisterStudentActivity extends AppCompatActivity {
@@ -47,15 +48,17 @@ public class RegisterStudentActivity extends AppCompatActivity {
     public static final String REPLY_HEIGHT = "rHeight";
     public static final String REPLY_LOCATION = "rLocation";
     public static final String REPLY_IMG_PATH = "rImage";
+    public static final String REPLY_IQ = "rIq";
+    public static final String REPLY_DATE = "rDate";
     public static String myDateFormat = "yyyy-MM-dd";
 
     final private int PERMISSION_WRITE_EXTERNAL_CAMERA= 100;
     private static final int REQUEST_LOCATION = 101;
 
-    TextInputEditText etfName, etAge, etMStatus,etHeight,etLocation;
+    TextInputEditText etfName, etAge, etMStatus,etHeight,etIQ,etLocation;
     ImageView pImgView;
     Button btnChooseImg,addStudentBtn;
-    String sFName,sAge, sMStatus,sHeight,sLocation;
+    String sFName,sAge, sMStatus,sHeight,sIQ,sLocation;
     double lat,lon;
     private Calendar myCalendar = Calendar.getInstance();
     private DatePickerDialog.OnDateSetListener bDateListener;
@@ -94,6 +97,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
         etAge = findViewById(R.id.etAge);
         etMStatus = findViewById(R.id.etMStatus);
         etHeight = findViewById(R.id.etHeight);
+        etIQ = findViewById(R.id.etIQ);
         etLocation = findViewById(R.id.etLocation);
 
         pImgView = findViewById(R.id.pImgView);
@@ -191,7 +195,9 @@ public class RegisterStudentActivity extends AppCompatActivity {
                     replyIntent.putExtra(REPLY_NAME, sHeight);
                     replyIntent.putExtra(REPLY_NAME, sLocation);
                     replyIntent.putExtra(REPLY_IMG_PATH, "NEEEEEMMMMMMYYYYYYYYYYY");
-                    replyIntent.putExtra(REPLY_NAME, sFName);
+                    replyIntent.putExtra(REPLY_IQ, sIQ);
+                    replyIntent.putExtra(REPLY_DATE, new Date());
+
                     setResult(RESULT_OK, replyIntent);
                     finish();
                 }else {
@@ -297,6 +303,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
         sAge = etAge.getText().toString();
         sMStatus = etMStatus.getText().toString();
         sHeight = etHeight.getText().toString();
+        sIQ = etIQ.getText().toString();
         sLocation= etLocation.getText().toString();
 
         boolean valid = true;
@@ -327,6 +334,12 @@ public class RegisterStudentActivity extends AppCompatActivity {
             valid = false;
         } else {
             etHeight.setError(null);
+        }
+        if (sIQ.isEmpty()) {
+            setErrorMsg(getString(R.string.required_field), etIQ);
+            valid = false;
+        } else {
+            etIQ.setError(null);
         }
 
         if (sLocation.isEmpty() ) {

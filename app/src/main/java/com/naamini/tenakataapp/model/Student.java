@@ -39,9 +39,9 @@ public class Student {
     public Student() {
     }
 
-    public Student(int sID, @NonNull String sName,  String sAge,  String sMaritalStatus,
+    public Student(@NonNull String sName,  String sAge,  String sMaritalStatus,
                     String sHeight,  String sLocation, String sProfileImg,
-                    String sIqTest, String sAdmissibility, String sCreatedOn) {
+                    String sIqTest,  String sCreatedOn) {
         this.sID = sID;
         this.sName = sName;
         this.sAge = sAge;

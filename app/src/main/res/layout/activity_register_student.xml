@@ -59,6 +59,16 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/spacing_mlarge" />
     <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/etIQ"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="IQ"
+        android:imeOptions="actionNext"/>
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/spacing_mlarge" />
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/etLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_AGE;
+import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_DATE;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_HEIGHT;
+import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_IQ;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_LOCATION;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_NAME;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_STATUS;
@@ -84,21 +86,23 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == NEW_STUDENT_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            /*Student s = new Student(data.getStringExtra(REPLY_NAME),
+            Student s = new Student(data.getStringExtra(REPLY_NAME),
                     data.getStringExtra(REPLY_AGE ),
                     data.getStringExtra(REPLY_STATUS),
                     data.getStringExtra(REPLY_HEIGHT),
                     data.getStringExtra(REPLY_LOCATION),
-                    data.getStringExtra(REPLY_IMG_PATH),
-                    data.getStringExtra(REPLY_NAME));*/
-            Student s = new Student();
+                    data.getStringExtra("NEMMMYYYYYYYYYYY"),
+                    data.getStringExtra(REPLY_IQ),
+                    data.getStringExtra(REPLY_DATE)
+                    );
+            /*Student s = new Student();
             s.setsName(REPLY_NAME);
             s.setsAge(REPLY_AGE);
             s.setsMaritalStatus(REPLY_STATUS);
             s.setsHeight(REPLY_HEIGHT);
             s.setsLocation(REPLY_LOCATION);
             s.setsProfileImg("NEMMMMMMMMMY");
-            s.setsCreatedOn(String.valueOf(new Date()));
+            s.setsCreatedOn(String.valueOf(new Date()));*/
             mStudentViewModel.insert(s);
             Toast.makeText(MainActivity.this, "SAVED!", Toast.LENGTH_LONG).show();
         } else {
