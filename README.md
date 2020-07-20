@@ -16,10 +16,8 @@
 **2 [General Preview](#general-preview)**<br>
 **3 [Technical](#technical)**<br>
 <!-- **4 [To Do List](#to-do-list)**<br> -->
-**4 [Contributing](#contributing)**<br>
-**5 [License](#license)**<br>
-**6 [Versions](#versions)**<br>
-**7 [Contact Information](#contact-information)**<br>
+**4 [Versions](#versions)**<br>
+**5 [Contact Information](#contact-information)**<br>
 
 
 :point_down: :point_down: :point_down: :point_down: :point_down:
@@ -49,9 +47,9 @@ You can Clone the project and compile it in android studio(used v4.0). Current b
 
  - Use Android studio 3.5 or later.
 
-         - Gradle version used: gradle 4.6
+         - Gradle version used: gradle 6.1.1
 
-         - gradle plugin used 3.2.1
+         - gradle plugin used 4.0.0
 
          - SDK version API 2
 
