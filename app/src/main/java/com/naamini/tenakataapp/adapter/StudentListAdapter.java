@@ -1,7 +1,6 @@
 package com.naamini.tenakataapp.adapter;
 
 import android.content.Context;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +22,11 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
     private final LayoutInflater mInflater;
     private List<Student> mStudents;
     private Context context;
-//    private int animation_type = 0;
 
     public StudentListAdapter(Context context,List<Student> students ) {
         mInflater = LayoutInflater.from(context);
         this.mStudents =students;
         this.context = context;
-//        this.animation_type=animation_type;
     }
 
     @NonNull

@@ -72,7 +72,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
     RadioButton radioFemale, radioMale;
     Button btnChooseImg, addStudentBtn;
     String sFName, sAge, sMStatus, sHeight, sIQ, sLocation, sGender,sImgPath;
-    boolean isAdmitted;
+    String isAdmitted;
     double lat, lon;
     Intent intent;
     private LocationManager locationManager;
@@ -152,7 +152,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
                 if (!checkPermission()) {
                     requestPermission();
                 } else {
-                    final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+                    final CharSequence[] options = {"Take Photo", "Cancel"};
                     AlertDialog.Builder builder = new AlertDialog.Builder(RegisterStudentActivity.this);
                     builder.setTitle("Add Photo:");
                     builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -161,23 +161,12 @@ public class RegisterStudentActivity extends AppCompatActivity {
                             if (options[item].equals("Take Photo")) {
                                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                 startActivityForResult(intent, REQUEST_CAMERA);
-                            } else if (options[item].equals("Choose from Gallery")) {
-                                Intent intent = new Intent();
-                                intent.setAction(Intent.ACTION_PICK);
-                                intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                startActivityForResult(intent, 2);
-
                             } else if (options[item].equals("Cancel")) {
                                 dialog.dismiss();
                             }
                         }
                     });
                     builder.show();
-               /* Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-*/
                 }
             }
         });
@@ -187,11 +176,11 @@ public class RegisterStudentActivity extends AppCompatActivity {
                 if (validateFields()) {
                     //write new student
                     if (sLocation.equals("KE") && Integer.parseInt(sIQ)>=100){
-                        isAdmitted=true;
+                        isAdmitted="true";
                     }else if (sMStatus.equalsIgnoreCase("Married")){
-                        isAdmitted=false;
+                        isAdmitted="false";
                     }else {
-                        isAdmitted=false;
+                        isAdmitted="false";
                     }
                     Intent replyIntent = new Intent();
                     replyIntent.putExtra(REPLY_NAME, sFName);
@@ -218,15 +207,9 @@ public class RegisterStudentActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == SELECT_FILE)
-                onSelectFromGalleryResult(data);
-            else if (requestCode == REQUEST_CAMERA)
+           if (requestCode == REQUEST_CAMERA)
                 onCaptureImageResult(data);
         }
-    }
-
-    private void onSelectFromGalleryResult(Intent data) {
-
     }
 
     private void onCaptureImageResult(Intent data) {
@@ -295,8 +278,8 @@ public class RegisterStudentActivity extends AppCompatActivity {
                 lon = location.getLongitude();
                 List<Address> addresss = null;
                 try {
-                    addresss = gcd.getFromLocation(lat,lon,1);
-//                    addresss = gcd.getFromLocation(-1.328664, 36.833734, 1);//KE codes
+//                    addresss = gcd.getFromLocation(lat,lon,1);
+                    addresss = gcd.getFromLocation(-1.328664, 36.833734, 1);//KE codes
 
                     String code = addresss.get(0).getCountryCode();
                     etLocation.setText(code);
