@@ -32,18 +32,11 @@ Android application solution that Predicts Admissibility to Tenakata University 
 Done by: Naamini Yonazi
 Date: 20th July 2020
 Solution to host: Google Cloud PLatform (GCP) (A page documentation can be found <a href="https://docs.google.com/document/d/1MAUv8ut5Fo8pw47ftg123rhPZuTarezdrVyfFDcbuvs/edit?usp=sharing" target="_blank" >here</a> )
-
+Project Doumentation can be found <a href="https://docs.google.com/document/d/1BRSitUjHGgr186FewzZHfg3OMOeOw3cWuHej1WE_8I8/edit?usp=sharing" target="_blank" >here</a> 
 
 <!-- [LINK TO YOUR BLOG POST (If it exits)](#)
 
 Like, share claps... :wink: -->
-
-
-## General Preview
-##Screenshots
-
-##<img src="https://raw.githubusercontent.com/tamzi/useHoverMultiSIM/master/art/useHover_MultiSIM_SIMCards_Available.png" width="30%"><img src="https://raw.githubusercontent.com/tamzi/useHoverMultiSIM/master/art/useHover_MultiSIM_Results_Comparison.png" width="30%"><img src="https://raw.githubusercontent.com/tamzi/useHoverMultiSIM/master/art/useHoverMultiSIM_Submit_Request.png" width="30%">
-
 
 ## Technical
 
