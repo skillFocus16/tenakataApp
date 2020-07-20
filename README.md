@@ -1,5 +1,4 @@
 # tenakataApp
-Android application solution that Predicts Admissibility to Tenakata University.
 <p align="center">
     <a href="https://github.com/skillFocus16/tenakataApp">
     <img src="http://www.tenakata.com/IMG/Tenakata_Logo.svg" alt="Tenakata" width=250 height=250>
@@ -29,7 +28,11 @@ Android application solution that Predicts Admissibility to Tenakata University.
 ## About the App
 The project
 
-To learn how it was built, read this series I put together:
+Android application solution that Predicts Admissibility to Tenakata University according to the criterias given.
+Done by: Naamini Yonazi
+Date: 20th July 2020
+Solution to host: Google Cloud PLatform (GCP) (A page documentation can be found <a href="https://docs.google.com/document/d/1MAUv8ut5Fo8pw47ftg123rhPZuTarezdrVyfFDcbuvs/edit?usp=sharing" target="_blank" >here</a> )
+
 
 <!-- [LINK TO YOUR BLOG POST (If it exits)](#)
 
@@ -42,27 +45,10 @@ Like, share claps... :wink: -->
 ##<img src="https://raw.githubusercontent.com/tamzi/useHoverMultiSIM/master/art/useHover_MultiSIM_SIMCards_Available.png" width="30%"><img src="https://raw.githubusercontent.com/tamzi/useHoverMultiSIM/master/art/useHover_MultiSIM_Results_Comparison.png" width="30%"><img src="https://raw.githubusercontent.com/tamzi/useHoverMultiSIM/master/art/useHoverMultiSIM_Submit_Request.png" width="30%">
 
 
-### Demo
-
-##a You can give it a spin [here](https://appetize.io/app/4wqdg0qrxqnv7096vjbbf7axag?device=nexus5&scale=75&orientation=portrait&osVersion=8.1&deviceColor=black)
-
-
-##b. You can check out the already compiled from the version on the release apk folder.
-        Download it here: [Download App](https://github.com/tamzi/useHoverMultiSIM/blob/master/releaseAPK/zipped.zip)
-
-
-
-
 ## Technical
 
-### How to use
-You can:
-
- a. Clone the project and compile it in android studio(used v4.0). Current branch 'master'
-
- ##b. You can check out the already compiled from the version on the release apk folder.
-        Download it here: [Download App](https://github.com/tamzi/useHoverMultiSIM/blob/master/releaseAPK/zipped.zip)
-
+### How to run
+You can Clone the project and compile it in android studio(used v4.0). Current branch 'master'
 
 
 ### Running the project
@@ -72,11 +58,11 @@ You can:
 
          - Gradle version used: gradle 4.6
 
-          - gradle plugin used 3.2.1
+         - gradle plugin used 3.2.1
 
-          SDK version API 2
+         - SDK version API 2
 
-          Build tools 29.0.3
+         - Build tools 29.0.3
 
 **2. Clone this repository:**
 
@@ -106,14 +92,6 @@ You can:
 
 **Read and Write External Storage, Camera, Internet**
 
-
-<!--<img src="https://raw.githubusercontent.com/tamzi/useHoverMultiSIM/master/art/hoverMultiSIM_Permissions_Needed_Android_Permission.png" width="30%"> <img src="https://raw.githubusercontent.com/tamzi/useHoverMultiSIM/master/art/useHover_Permissions_phone_Calls_Android_Permission.png" width="30%"> <img src="https://raw.githubusercontent.com/tamzi/useHoverMultiSIM/master/art/useHoverMultiSIM_viewSMS_Android_Permission.png" width="30%">
--->
-
-## Contributing
-
-## License
-
 ### Assets
 
 **Credits:**
@@ -128,8 +106,3 @@ Version 1.0  DATE 20/07/2020
 ## Contact Information
 * Email: mailto:naaminicyonazi@gmail.com
 * Twitter: [@naaminiyonazi](https://twitter.com/naaminiyonazi?lang=en "naaminiyonazi on twitter")
-
-
-<hr>
-
-:bowtie: :v: :tropical_drink:
