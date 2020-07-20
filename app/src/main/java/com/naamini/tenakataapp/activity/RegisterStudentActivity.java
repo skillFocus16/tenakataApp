@@ -42,6 +42,7 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.naamini.tenakataapp.R;
 
@@ -51,6 +52,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
 public class RegisterStudentActivity extends AppCompatActivity {
 
@@ -64,6 +68,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
     public static final String REPLY_IQ = "rIq";
     public static final String REPLY_ADMIT = "rAdmit";
 
+    public static int REQUEST_PERMISSION=103;
     private static final int REQUEST_LOCATION = 101;
     public static String myDateFormat = "yyyy-MM-dd";
     final private int PERMISSION_WRITE_EXTERNAL_CAMERA = 100;
@@ -83,6 +88,10 @@ public class RegisterStudentActivity extends AppCompatActivity {
     private LocationManager locationManager;
     private Uri tempUri;
     private String _realPath;
+    public static final int PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
+
+    String[] perms = {"android.permission.READ_EXTERNAL_STORAGE", "android.permission.CAMERA"};
+    private static final int permsRequestCode = 200;
 
     public static void setErrorMsg(String msg, EditText viewId) {
         int ecolor = Color.WHITE;
@@ -152,6 +161,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
             if (!checkPermission()) {
                 requestPermission();
             } else {
+
                 final CharSequence[] options = {"Take Photo", "Cancel"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(RegisterStudentActivity.this);
                 builder.setTitle("Add Photo:");
@@ -253,6 +263,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
         Log.d("paths:", path);
         return Uri.parse(path);
     }
+
     public String getRealProfilePathFromURI(Uri uri) {
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         cursor.moveToFirst();
@@ -316,20 +327,110 @@ public class RegisterStudentActivity extends AppCompatActivity {
         }
     }
 
-    protected boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+  /*  protected boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(this, CAMERA);
         return result == PackageManager.PERMISSION_GRANTED;
     }
 
     protected void requestPermission() {
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
-            //Toast.makeText(this, "Write External Storage permission allows us to do store images. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, CAMERA)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, CAMERA)) {
+                //Toast.makeText(this, "Write External Storage permission allows us to do store images. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
+            }
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSION_WRITE_EXTERNAL_CAMERA);
+                requestPermissions(new String[]{CAMERA}, PERMISSION_WRITE_EXTERNAL_CAMERA);
+                requestPermissions(new String[]{READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+
             }
         }
+    }
+*/
+    private  void requestStoragePermission()
+    {
+        if(ActivityCompat.shouldShowRequestPermissionRationale(this, READ_EXTERNAL_STORAGE))
+        {
+            new AlertDialog.Builder(this)
+                    .setTitle("Permission Needed")
+                    .setMessage("Permission is needed to access files from your device...")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(RegisterStudentActivity.this,new String[]{READ_EXTERNAL_STORAGE},REQUEST_PERMISSION);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).create().show();
+        }
+        else
+        {
+            ActivityCompat.requestPermissions(this,new String[]{READ_EXTERNAL_STORAGE},REQUEST_PERMISSION);
+        }
+    }
+
+
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
+
+        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{READ_EXTERNAL_STORAGE, CAMERA}, permsRequestCode);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case permsRequestCode:
+                if (grantResults.length > 0) {
+
+                    boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+
+                    if (locationAccepted && cameraAccepted)
+                        Toast.makeText(RegisterStudentActivity.this, "Permission Granted, Now you can access location data and camera.", Toast.LENGTH_LONG).show();
+                    else {
+
+                        Toast.makeText(RegisterStudentActivity.this,  "Permission Denied, You cannot access location data and camera.", Toast.LENGTH_LONG).show();
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (shouldShowRequestPermissionRationale(READ_EXTERNAL_STORAGE)) {
+
+                                showMessageOKCancel("You need to allow access to both the permissions",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                    requestPermissions(new String[]{READ_EXTERNAL_STORAGE, CAMERA},
+                                                            permsRequestCode);
+                                                }
+                                            }
+                                        });
+                                return;
+                            }
+                        }
+
+                    }
+                }
+
+
+                break;
+        }
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(RegisterStudentActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
     }
 
     private boolean validateFields() {
@@ -405,5 +506,4 @@ public class RegisterStudentActivity extends AppCompatActivity {
         }
         return valid;
     }
-
 }
