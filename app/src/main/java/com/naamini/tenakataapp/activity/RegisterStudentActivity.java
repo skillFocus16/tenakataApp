@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Address;
@@ -14,6 +15,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -37,6 +39,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.textfield.TextInputEditText;
 import com.naamini.tenakataapp.R;
 
@@ -76,6 +81,8 @@ public class RegisterStudentActivity extends AppCompatActivity {
     double lat, lon;
     Intent intent;
     private LocationManager locationManager;
+    private Uri tempUri;
+    private String _realPath;
 
     public static void setErrorMsg(String msg, EditText viewId) {
         int ecolor = Color.WHITE;
@@ -93,7 +100,6 @@ public class RegisterStudentActivity extends AppCompatActivity {
         initToolbar();
         initComponents();
         handleOnClicks();
-
     }
 
     @Override
@@ -131,43 +137,36 @@ public class RegisterStudentActivity extends AppCompatActivity {
         addStudentBtn = findViewById(R.id.addStudentBtn);
 
         intent = getIntent();
-
     }
 
     private void handleOnClicks() {
-        getMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    OnGPS();
-                } else {
-                    getLocation();
-                }
+        getMap.setOnClickListener(view -> {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                OnGPS();
+            } else {
+                getLocation();
             }
         });
-        btnChooseImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                if (!checkPermission()) {
-                    requestPermission();
-                } else {
-                    final CharSequence[] options = {"Take Photo", "Cancel"};
-                    AlertDialog.Builder builder = new AlertDialog.Builder(RegisterStudentActivity.this);
-                    builder.setTitle("Add Photo:");
-                    builder.setItems(options, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int item) {
-                            if (options[item].equals("Take Photo")) {
-                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                startActivityForResult(intent, REQUEST_CAMERA);
-                            } else if (options[item].equals("Cancel")) {
-                                dialog.dismiss();
-                            }
+        btnChooseImg.setOnClickListener(view -> {
+            if (!checkPermission()) {
+                requestPermission();
+            } else {
+                final CharSequence[] options = {"Take Photo", "Cancel"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterStudentActivity.this);
+                builder.setTitle("Add Photo:");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (options[item].equals("Take Photo")) {
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(intent, REQUEST_CAMERA);
+                        } else if (options[item].equals("Cancel")) {
+                            dialog.dismiss();
                         }
-                    });
-                    builder.show();
-                }
+                    }
+                });
+                builder.show();
             }
         });
         addStudentBtn.setOnClickListener(new View.OnClickListener() {
@@ -189,7 +188,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
                     replyIntent.putExtra(REPLY_STATUS, sMStatus);
                     replyIntent.putExtra(REPLY_HEIGHT, sHeight);
                     replyIntent.putExtra(REPLY_LOCATION, sLocation);
-                    replyIntent.putExtra(REPLY_IMG_PATH, sImgPath);
+                    replyIntent.putExtra(REPLY_IMG_PATH, _realPath);
                     replyIntent.putExtra(REPLY_IQ, sIQ);
                     replyIntent.putExtra(REPLY_ADMIT, isAdmitted);
 
@@ -234,10 +233,34 @@ public class RegisterStudentActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        pImgView.setImageBitmap(thumbnail);
+        tempUri = getProfileImageUri(getApplicationContext(), thumbnail);
+        File finalFile = new File(getRealProfilePathFromURI(tempUri));
+//        pImgView.setImageBitmap(thumbnail);
+        Glide.with(RegisterStudentActivity.this)
+                .load(thumbnail)
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                .apply(RequestOptions.overrideOf(500, 500))
+                .apply(RequestOptions.errorOf(R.color.colorPrimary))
+                .into(pImgView);
         pImgView.setVisibility(View.VISIBLE);
     }
 
+    public Uri getProfileImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+
+        Log.d("paths:", path);
+        return Uri.parse(path);
+    }
+    public String getRealProfilePathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+
+        _realPath = cursor.getString(idx);
+        return cursor.getString(idx);
+    }
 
     private void OnGPS() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -376,7 +399,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
             radioFemale.setError(null);
         }
 
-        if (String.valueOf(sImgPath).isEmpty()){
+        if (String.valueOf(_realPath).isEmpty()){
             Toast.makeText(RegisterStudentActivity.this, R.string.img_required_field, Toast.LENGTH_LONG).show();
             valid = false;
         }
