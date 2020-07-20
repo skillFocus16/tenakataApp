@@ -37,4 +37,5 @@
     <string name="student_reg">Student Registration</string>
     <string name="status_admitted">Status: Admitted</string>
     <string name="status_not_admitted">Status: Not Admitted</string>
+    <string name="no_internet">No Internet connection</string>
 </resources>

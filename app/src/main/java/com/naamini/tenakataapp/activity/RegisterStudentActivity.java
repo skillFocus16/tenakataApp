@@ -42,6 +42,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.naamini.tenakataapp.R;
 
 import java.io.ByteArrayOutputStream;
@@ -65,6 +68,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
     public static final String REPLY_IMG_PATH = "rImage";
     public static final String REPLY_IQ = "rIq";
     public static final String REPLY_ADMIT = "rAdmit";
+    public static  Uri TEMP_URI;
 
     private static final int REQUEST_LOCATION = 101;
     private static final int permsRequestCode = 200;
@@ -82,8 +86,14 @@ public class RegisterStudentActivity extends AppCompatActivity {
     double lat, lon;
     Intent intent;
     private LocationManager locationManager;
-    private Uri tempUri;
+    public Uri tempUri;
     private String _realPath;
+
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
+    FirebaseStorage firebaseStorage;
+    private String refStudents="students";
+    MainActivity mainActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +120,11 @@ public class RegisterStudentActivity extends AppCompatActivity {
     }
 
     private void initComponents() {
+        mainActivity=new MainActivity();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference(refStudents);
+        databaseReference.keepSynced(true);
+
         etfName = findViewById(R.id.etfName);
         etAge = findViewById(R.id.etAge);
         etMStatus = findViewById(R.id.etMStatus);
@@ -133,11 +148,15 @@ public class RegisterStudentActivity extends AppCompatActivity {
 
     private void handleOnClicks() {
         getMap.setOnClickListener(view -> {
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                OnGPS();
-            } else {
-                getLocation();
+            if ((mainActivity.isOnline())) {
+                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    OnGPS();
+                } else {
+                    getLocation();
+                }
+            }else{
+                Toast.makeText(RegisterStudentActivity.this, R.string.no_internet, Toast.LENGTH_SHORT).show();
             }
         });
         btnChooseImg.setOnClickListener(view -> {
@@ -219,6 +238,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         tempUri = getProfileImageUri(getApplicationContext(), thumbnail);
+        TEMP_URI = getProfileImageUri(getApplicationContext(), thumbnail);
         File finalFile = new File(getRealProfilePathFromURI(tempUri));
         Glide.with(RegisterStudentActivity.this)
                 .load(thumbnail)

@@ -67,8 +67,7 @@
                     android:layout_marginRight="@dimen/spacing_middle"
                     android:layout_marginTop="@dimen/spacing_medium"
                     android:maxLines="2"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textColor="@android:color/holo_red_dark" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
             </LinearLayout>
 

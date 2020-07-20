@@ -1,0 +1,85 @@
+{
+  "project_info": {
+    "project_number": "699101366793",
+    "firebase_url": "https://goba-fresh-farm.firebaseio.com",
+    "project_id": "goba-fresh-farm",
+    "storage_bucket": "goba-fresh-farm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:699101366793:android:203c216887e85f8c4306d8",
+        "android_client_info": {
+          "package_name": "com.naamini.gobafreshfarm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "699101366793-s1vgiacevb9cor2nq5i5kgvtsp77l7v8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.naamini.gobafreshfarm",
+            "certificate_hash": "848c6b39c80c88e05873f05ab5b2decf97756020"
+          }
+        },
+        {
+          "client_id": "699101366793-7vq5kj28709pvn4t5e3cecluc60etvh2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBp2hpBDtRM1jbqfXc7a_DtRO7Eb4gZ_m8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "699101366793-7vq5kj28709pvn4t5e3cecluc60etvh2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:699101366793:android:009047254588596c4306d8",
+        "android_client_info": {
+          "package_name": "com.naamini.tenakataapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "699101366793-cge7757989gbg2rk324dpjdd8s8iiipq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.naamini.tenakataapp",
+            "certificate_hash": "848c6b39c80c88e05873f05ab5b2decf97756020"
+          }
+        },
+        {
+          "client_id": "699101366793-7vq5kj28709pvn4t5e3cecluc60etvh2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBp2hpBDtRM1jbqfXc7a_DtRO7Eb4gZ_m8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "699101366793-7vq5kj28709pvn4t5e3cecluc60etvh2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,10 +1,13 @@
 package com.naamini.tenakataapp.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,20 +17,30 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.naamini.tenakataapp.R;
+import com.naamini.tenakataapp.activity.MainActivity;
 import com.naamini.tenakataapp.model.Student;
 
 import java.util.List;
+
+import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_IMG_PATH;
 
 public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.StudentViewHolder> {
     private final LayoutInflater mInflater;
     private List<Student> mStudents;
     private Context context;
+    String profilePath;
+    private AdapterView.OnItemClickListener mOnItemClickListener;
 
     public StudentListAdapter(Context context,List<Student> students ) {
         mInflater = LayoutInflater.from(context);
         this.mStudents =students;
         this.context = context;
     }
+
+    public void setOnItemClickListener(final AdapterView.OnItemClickListener mItemClickListener) {
+        this.mOnItemClickListener = mItemClickListener;
+    }
+
 
     @NonNull
     @Override
@@ -43,11 +56,18 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
             holder.studentName.setText(currentStudent.getsName());
             holder.itemViewDesc.setText("Country:"+currentStudent.getsLocation());
             if (currentStudent.getsAdmissibility().equalsIgnoreCase("true")){
+                holder.status.setTextColor(context.getResources().getColor(R.color.green));
                 holder.status.setText(R.string.status_admitted);
             }else {
                 holder.status.setTextColor(context.getResources().getColor(R.color.design_default_color_error));
                 holder.status.setText(R.string.status_not_admitted);
             }
+
+            holder.lyt_parent.setOnClickListener(view -> {
+               /* uploadImageToFirebase(s,storageReference, Uri.parse(data.getStringExtra(REPLY_IMG_PATH)), profilePath, key);            //send to firebase
+
+                ((MainActivity)context).uploadImageToFirebase(currentStudent,currentStudent.getsProfileImg(),profilePath,currentStudent.getsID());
+*/            });
 
             Glide.with(context)
                     .load(currentStudent.getsProfileImg())
@@ -82,6 +102,7 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
     public class StudentViewHolder extends RecyclerView.ViewHolder {
         public final TextView studentName,itemViewDesc, status;
         ImageView pImg;
+        LinearLayout lyt_parent;
 
         private StudentViewHolder(View itemView) {
             super(itemView);
@@ -89,6 +110,7 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
             itemViewDesc = itemView.findViewById(R.id.description);
             status = itemView.findViewById(R.id.status);
             pImg = itemView.findViewById(R.id.pImg);
+            lyt_parent = itemView.findViewById(R.id.lyt_parent);
         }
     }
 }
