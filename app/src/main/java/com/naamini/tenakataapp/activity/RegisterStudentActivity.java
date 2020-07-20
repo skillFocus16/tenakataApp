@@ -23,7 +23,6 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,7 +41,6 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.naamini.tenakataapp.R;
 
@@ -68,12 +66,10 @@ public class RegisterStudentActivity extends AppCompatActivity {
     public static final String REPLY_IQ = "rIq";
     public static final String REPLY_ADMIT = "rAdmit";
 
-    public static int REQUEST_PERMISSION=103;
     private static final int REQUEST_LOCATION = 101;
-    public static String myDateFormat = "yyyy-MM-dd";
-    final private int PERMISSION_WRITE_EXTERNAL_CAMERA = 100;
-
-    private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
+    private static final int permsRequestCode = 200;
+    public static int REQUEST_PERMISSION = 103;
+    private int REQUEST_CAMERA = 0;
 
     TextInputEditText etfName, etAge, etMStatus, etHeight, etIQ, etLocation;
     ImageView pImgView;
@@ -81,26 +77,13 @@ public class RegisterStudentActivity extends AppCompatActivity {
     RadioGroup radioGroup;
     RadioButton radioFemale, radioMale;
     Button btnChooseImg, addStudentBtn;
-    String sFName, sAge, sMStatus, sHeight, sIQ, sLocation, sGender,sImgPath;
+    String sFName, sAge, sMStatus, sHeight, sIQ, sLocation, sGender, sImgPath;
     String isAdmitted;
     double lat, lon;
     Intent intent;
     private LocationManager locationManager;
     private Uri tempUri;
     private String _realPath;
-    public static final int PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
-
-    String[] perms = {"android.permission.READ_EXTERNAL_STORAGE", "android.permission.CAMERA"};
-    private static final int permsRequestCode = 200;
-
-    public static void setErrorMsg(String msg, EditText viewId) {
-        int ecolor = Color.WHITE;
-        String estring = msg;
-        ForegroundColorSpan fgcspan = new ForegroundColorSpan(ecolor);
-        SpannableStringBuilder sbuilder = new SpannableStringBuilder(estring);
-        sbuilder.setSpan(fgcspan, 0, estring.length(), 0);
-        viewId.setError(sbuilder);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +104,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setTitle("Student Registration");
+        getSupportActionBar().setTitle(R.string.student_reg);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
@@ -134,7 +117,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
         etIQ = findViewById(R.id.etIQ);
         etLocation = findViewById(R.id.etLocation);
 
-        getMap=findViewById(R.id.getMap);
+        getMap = findViewById(R.id.getMap);
 
         radioGroup = findViewById(R.id.radioGrp);
         radioFemale = findViewById(R.id.radioF);
@@ -161,52 +144,45 @@ public class RegisterStudentActivity extends AppCompatActivity {
             if (!checkPermission()) {
                 requestPermission();
             } else {
-
-                final CharSequence[] options = {"Take Photo", "Cancel"};
+                final CharSequence[] options = {getString(R.string.take_photo), getString(R.string.cancel)};
                 AlertDialog.Builder builder = new AlertDialog.Builder(RegisterStudentActivity.this);
-                builder.setTitle("Add Photo:");
-                builder.setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int item) {
-                        if (options[item].equals("Take Photo")) {
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent, REQUEST_CAMERA);
-                        } else if (options[item].equals("Cancel")) {
-                            dialog.dismiss();
-                        }
+                builder.setTitle(R.string.add_photo);
+                builder.setItems(options, (dialog, item) -> {
+                    if (options[item].equals(getString(R.string.take_photo))) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent, REQUEST_CAMERA);
+                    } else if (options[item].equals(getString(R.string.cancel))) {
+                        dialog.dismiss();
                     }
                 });
                 builder.show();
             }
         });
-        addStudentBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (validateFields()) {
-                    //write new student
-                    if (sLocation.equals("KE") && Integer.parseInt(sIQ)>=100){
-                        isAdmitted="true";
-                    }else if (sMStatus.equalsIgnoreCase("Married")){
-                        isAdmitted="false";
-                    }else {
-                        isAdmitted="false";
-                    }
-                    Intent replyIntent = new Intent();
-                    replyIntent.putExtra(REPLY_NAME, sFName);
-                    replyIntent.putExtra(REPLY_GENDER, sGender);
-                    replyIntent.putExtra(REPLY_AGE, sAge);
-                    replyIntent.putExtra(REPLY_STATUS, sMStatus);
-                    replyIntent.putExtra(REPLY_HEIGHT, sHeight);
-                    replyIntent.putExtra(REPLY_LOCATION, sLocation);
-                    replyIntent.putExtra(REPLY_IMG_PATH, _realPath);
-                    replyIntent.putExtra(REPLY_IQ, sIQ);
-                    replyIntent.putExtra(REPLY_ADMIT, isAdmitted);
-
-                    setResult(RESULT_OK, replyIntent);
-                    finish();
+        addStudentBtn.setOnClickListener(view -> {
+            if (validateFields()) {
+                //write new student
+                if (sLocation.equals(getString(R.string.kenya_code)) && Integer.parseInt(sIQ) >= 100) {
+                    isAdmitted = "true";
+                } else if (sMStatus.equalsIgnoreCase("Married")) {
+                    isAdmitted = "false";
                 } else {
-                    Toast.makeText(RegisterStudentActivity.this, R.string.required_field, Toast.LENGTH_LONG).show();
+                    isAdmitted = "false";
                 }
+                Intent replyIntent = new Intent();
+                replyIntent.putExtra(REPLY_NAME, sFName);
+                replyIntent.putExtra(REPLY_GENDER, sGender);
+                replyIntent.putExtra(REPLY_AGE, sAge);
+                replyIntent.putExtra(REPLY_STATUS, sMStatus);
+                replyIntent.putExtra(REPLY_HEIGHT, sHeight);
+                replyIntent.putExtra(REPLY_LOCATION, sLocation);
+                replyIntent.putExtra(REPLY_IMG_PATH, _realPath);
+                replyIntent.putExtra(REPLY_IQ, sIQ);
+                replyIntent.putExtra(REPLY_ADMIT, isAdmitted);
+
+                setResult(RESULT_OK, replyIntent);
+                finish();
+            } else {
+                Toast.makeText(RegisterStudentActivity.this, R.string.required_field, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -216,7 +192,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
-           if (requestCode == REQUEST_CAMERA)
+            if (requestCode == REQUEST_CAMERA)
                 onCaptureImageResult(data);
         }
     }
@@ -229,7 +205,6 @@ public class RegisterStudentActivity extends AppCompatActivity {
         File destination = new File(Environment.getExternalStorageDirectory(),
                 System.currentTimeMillis() + ".jpg");
 
-        Log.e("File?: ", String.valueOf(destination));
         sImgPath = String.valueOf(destination);
 
         FileOutputStream fo;
@@ -245,7 +220,6 @@ public class RegisterStudentActivity extends AppCompatActivity {
         }
         tempUri = getProfileImageUri(getApplicationContext(), thumbnail);
         File finalFile = new File(getRealProfilePathFromURI(tempUri));
-//        pImgView.setImageBitmap(thumbnail);
         Glide.with(RegisterStudentActivity.this)
                 .load(thumbnail)
                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
@@ -259,8 +233,6 @@ public class RegisterStudentActivity extends AppCompatActivity {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-
-        Log.d("paths:", path);
         return Uri.parse(path);
     }
 
@@ -312,9 +284,8 @@ public class RegisterStudentActivity extends AppCompatActivity {
                 lon = location.getLongitude();
                 List<Address> addresss = null;
                 try {
-//                    addresss = gcd.getFromLocation(lat,lon,1);
-                    addresss = gcd.getFromLocation(-1.328664, 36.833734, 1);//KE codes
-
+                    addresss = gcd.getFromLocation(lat,lon,1);
+//                    addresss = gcd.getFromLocation(-1.328664, 36.833734, 1);//KE codes
                     String code = addresss.get(0).getCountryCode();
                     etLocation.setText(code);
                 } catch (IOException e) {
@@ -327,48 +298,15 @@ public class RegisterStudentActivity extends AppCompatActivity {
         }
     }
 
-  /*  protected boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(this, CAMERA);
-        return result == PackageManager.PERMISSION_GRANTED;
-    }
-
-    protected void requestPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, CAMERA)) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, CAMERA)) {
-                //Toast.makeText(this, "Write External Storage permission allows us to do store images. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
-            }
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{CAMERA}, PERMISSION_WRITE_EXTERNAL_CAMERA);
-                requestPermissions(new String[]{READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-
-            }
-        }
-    }
-*/
-    private  void requestStoragePermission()
-    {
-        if(ActivityCompat.shouldShowRequestPermissionRationale(this, READ_EXTERNAL_STORAGE))
-        {
+    private void requestStoragePermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, READ_EXTERNAL_STORAGE)) {
             new AlertDialog.Builder(this)
-                    .setTitle("Permission Needed")
-                    .setMessage("Permission is needed to access files from your device...")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(RegisterStudentActivity.this,new String[]{READ_EXTERNAL_STORAGE},REQUEST_PERMISSION);
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }).create().show();
-        }
-        else
-        {
-            ActivityCompat.requestPermissions(this,new String[]{READ_EXTERNAL_STORAGE},REQUEST_PERMISSION);
+                    .setTitle(R.string.perm_needed)
+                    .setMessage(R.string.perm_needed_txt)
+                    .setPositiveButton((getString(R.string.ok)), (dialog, which) -> ActivityCompat.requestPermissions(RegisterStudentActivity.this, new String[]{READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION))
+                    .setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss()).create().show();
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
         }
     }
 
@@ -394,22 +332,18 @@ public class RegisterStudentActivity extends AppCompatActivity {
                     boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
 
                     if (locationAccepted && cameraAccepted)
-                        Toast.makeText(RegisterStudentActivity.this, "Permission Granted, Now you can access location data and camera.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(RegisterStudentActivity.this, R.string.perm_granted, Toast.LENGTH_LONG).show();
                     else {
-
-                        Toast.makeText(RegisterStudentActivity.this,  "Permission Denied, You cannot access location data and camera.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(RegisterStudentActivity.this, R.string.perm_denied, Toast.LENGTH_LONG).show();
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if (shouldShowRequestPermissionRationale(READ_EXTERNAL_STORAGE)) {
 
-                                showMessageOKCancel("You need to allow access to both the permissions",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                    requestPermissions(new String[]{READ_EXTERNAL_STORAGE, CAMERA},
-                                                            permsRequestCode);
-                                                }
+                                showMessageOKCancel(getString(R.string.allow_perms),
+                                        (dialog, which) -> {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                requestPermissions(new String[]{READ_EXTERNAL_STORAGE, CAMERA},
+                                                        permsRequestCode);
                                             }
                                         });
                                 return;
@@ -427,8 +361,8 @@ public class RegisterStudentActivity extends AppCompatActivity {
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(RegisterStudentActivity.this)
                 .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
+                .setPositiveButton(R.string.ok, okListener)
+                .setNegativeButton(R.string.cancel, null)
                 .create()
                 .show();
     }
@@ -500,10 +434,19 @@ public class RegisterStudentActivity extends AppCompatActivity {
             radioFemale.setError(null);
         }
 
-        if (String.valueOf(_realPath).isEmpty()){
+        if (String.valueOf(_realPath).isEmpty()) {
             Toast.makeText(RegisterStudentActivity.this, R.string.img_required_field, Toast.LENGTH_LONG).show();
             valid = false;
         }
         return valid;
+    }
+
+    public static void setErrorMsg(String msg, EditText viewId) {
+        int ecolor = Color.WHITE;
+        String estring = msg;
+        ForegroundColorSpan fgcspan = new ForegroundColorSpan(ecolor);
+        SpannableStringBuilder sbuilder = new SpannableStringBuilder(estring);
+        sbuilder.setSpan(fgcspan, 0, estring.length(), 0);
+        viewId.setError(sbuilder);
     }
 }

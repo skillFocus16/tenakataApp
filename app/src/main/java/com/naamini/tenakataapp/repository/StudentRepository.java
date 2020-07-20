@@ -1,7 +1,6 @@
 package com.naamini.tenakataapp.repository;
 
 import android.app.Application;
-import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
@@ -30,26 +29,8 @@ public class StudentRepository {
     }
 
     public void insert (Student student){
-//        new insertAsyncTask(mStudentDao).execute(student);
         StudentDatabaseConfig.databaseWriteExecutor.execute(()->{
             mStudentDao.insert(student);
         });
     }
-
-
-    private static class insertAsyncTask extends AsyncTask<Student, Void, Void> {
-
-        private StudentDao mAsyncTaskDao;
-
-        insertAsyncTask(StudentDao dao) {
-            mAsyncTaskDao = dao;
-        }
-
-        @Override
-        protected Void doInBackground(final Student... params) {
-            mAsyncTaskDao.insert(params[0]);
-            return null;
-        }
-    }
-
 }

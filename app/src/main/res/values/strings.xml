@@ -24,4 +24,17 @@
     <string name="noStudentAvailable">No Student available!</string>
     <string name="reg_success">Successfully registered!</string>
     <string name="cancelled">Cancelled</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="perm_denied">Permission Denied</string>
+    <string name="perm_granted">Permission Granted</string>
+    <string name="allow_perms">Please allow both permissions</string>
+    <string name="perm_needed">Permission Needed</string>
+    <string name="perm_needed_txt">Permission is needed to access files from your device...</string>
+    <string name="kenya_code">KE</string>
+    <string name="add_photo">Add Photo:</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="student_reg">Student Registration</string>
+    <string name="status_admitted">Status: Admitted</string>
+    <string name="status_not_admitted">Status: Not Admitted</string>
 </resources>

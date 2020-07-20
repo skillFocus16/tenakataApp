@@ -43,10 +43,10 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
             holder.studentName.setText(currentStudent.getsName());
             holder.itemViewDesc.setText("Country:"+currentStudent.getsLocation());
             if (currentStudent.getsAdmissibility().equalsIgnoreCase("true")){
-                holder.status.setText("Status: Admitted");
+                holder.status.setText(R.string.status_admitted);
             }else {
                 holder.status.setTextColor(context.getResources().getColor(R.color.design_default_color_error));
-                holder.status.setText("Status: Not Admitted");
+                holder.status.setText(R.string.status_not_admitted);
             }
 
             Glide.with(context)

@@ -30,12 +30,8 @@ public abstract class StudentDatabaseConfig extends RoomDatabase {
         if (INSTANCE == null) {
             synchronized (StudentDatabaseConfig.class) {
                 if (INSTANCE == null) {
-                    // Create database here
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             StudentDatabaseConfig.class, "student_database")
-                            // Wipes and rebuilds instead of migrating
-                            // if no Migration object.
-                            // Migration is not part of this practical.
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .build();
@@ -44,7 +40,6 @@ public abstract class StudentDatabaseConfig extends RoomDatabase {
         }
         return INSTANCE;
     }
-
     private static RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback(){
         @Override
         public void onOpen(@NonNull SupportSQLiteDatabase db) {

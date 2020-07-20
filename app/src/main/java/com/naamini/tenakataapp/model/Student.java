@@ -102,7 +102,6 @@ public class Student {
         this.sHeight = sHeight;
     }
 
-
     public String getsLocation() {
         return sLocation;
     }

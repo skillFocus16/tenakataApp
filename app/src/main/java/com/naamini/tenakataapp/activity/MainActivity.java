@@ -65,22 +65,17 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-//        mStudentViewModel = ViewModelProviders.of(this).get(StudentViewModel.class);
         mStudentViewModel = new ViewModelProvider(MainActivity.this).get(StudentViewModel.class);
         mStudentViewModel.getAllStudents().observe(MainActivity.this, students -> {
-            // Update the cached copy of the words in the adapter.
                 adapter.setStudents(students);
                 adapter.notifyDataSetChanged();
         });
     }
 
     private void handleOnClicks() {
-        fabNewBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this, RegisterStudentActivity.class);
-                startActivityForResult(i, NEW_STUDENT_ACTIVITY_REQUEST_CODE);
-            }
+        fabNewBtn.setOnClickListener(view -> {
+            Intent i = new Intent(MainActivity.this, RegisterStudentActivity.class);
+            startActivityForResult(i, NEW_STUDENT_ACTIVITY_REQUEST_CODE);
         });
     }
 
