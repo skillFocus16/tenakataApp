@@ -56,7 +56,9 @@ import java.util.List;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-
+/**
+ * Created by Naamini Yonazi on 19/07/20
+ */
 public class RegisterStudentActivity extends AppCompatActivity {
 
     public static final String REPLY_NAME = "rName";

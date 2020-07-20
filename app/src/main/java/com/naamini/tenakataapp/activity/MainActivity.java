@@ -10,14 +10,11 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -40,8 +37,9 @@ import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_IQ;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_LOCATION;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_NAME;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_STATUS;
-import static com.naamini.tenakataapp.activity.RegisterStudentActivity.TEMP_URI;
-
+/**
+ * Created by Naamini Yonazi on 19/07/20
+ */
 public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton fabNewBtn;

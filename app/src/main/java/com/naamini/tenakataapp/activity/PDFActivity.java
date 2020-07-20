@@ -33,7 +33,9 @@ import java.io.IOException;
 
 
 import java.io.File;
-
+/**
+ * Created by Naamini Yonazi on 19/07/20
+ */
 public class PDFActivity extends AppCompatActivity {
 
     Context mContext;
