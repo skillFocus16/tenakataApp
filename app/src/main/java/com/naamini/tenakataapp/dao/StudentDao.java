@@ -19,7 +19,7 @@ public interface StudentDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(Student student);
 
-    @Query("SELECT * from student_table ORDER BY sID DESC")//ORDER BY student ASC")
+    @Query("SELECT * from student_table ORDER BY admissibility DESC")//ORDER BY student ASC")
     LiveData<List<Student>> getAllStudents();
 
     @Query("SELECT * from student_table WHERE iq > :iq")
@@ -31,4 +31,6 @@ public interface StudentDao {
     @Query("SELECT * from student_table WHERE age > :age")
     LiveData<List<Student>> getAge(int age);
 
+    @Query("SELECT * from student_table WHERE iq > :iq AND location LIKE :location")//iq>100, location==KE,
+    LiveData<List<Student>> getAdmissibleStudents(int iq, String location);
 }

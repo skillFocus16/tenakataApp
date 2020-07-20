@@ -48,7 +48,6 @@ public class SplashScreenActivity extends Activity {
                 .load(R.drawable.tenakata_logo)
                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                 .apply(RequestOptions.overrideOf(500, 500))
-                .apply(RequestOptions.placeholderOf(R.color.colorPrimary))
                 .apply(RequestOptions.errorOf(R.color.colorPrimary))
                 .into(splash);
     }

@@ -17,4 +17,11 @@
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="gender">Gender</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="enable_gps">Please enable GPS</string>
+    <string name="choose_gender">Choose gender</string>
+    <string name="noStudentAvailable">No Student available!</string>
+    <string name="reg_success">Successfully registered!</string>
+    <string name="cancelled">Cancelled</string>
 </resources>

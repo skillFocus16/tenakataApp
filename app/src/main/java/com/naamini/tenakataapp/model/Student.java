@@ -35,13 +35,12 @@ public class Student {
     @ColumnInfo(name = "admissibility")
     public String sAdmissibility;
 
-
     @Ignore
     public Student() {
     }
 
     public Student(@NonNull String sName, String gender, String sAge, String sMaritalStatus, String sHeight,
-                   String sLocation, String sProfileImg, String sIqTest) {
+                   String sLocation, String sProfileImg, String sIqTest, String sAdmissibility) {
         this.sName = sName;
         this.gender = gender;
         this.sAge = sAge;
@@ -50,6 +49,7 @@ public class Student {
         this.sLocation = sLocation;
         this.sProfileImg = sProfileImg;
         this.sIqTest = sIqTest;
+        this.sAdmissibility = sAdmissibility;
     }
 
     public int getsID() {

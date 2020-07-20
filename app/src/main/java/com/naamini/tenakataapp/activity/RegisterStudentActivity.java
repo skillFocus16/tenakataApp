@@ -1,11 +1,12 @@
 package com.naamini.tenakataapp.activity;
 
 import android.Manifest;
-import android.app.DatePickerDialog;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Criteria;
@@ -15,6 +16,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.SpannableStringBuilder;
@@ -38,8 +40,11 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.textfield.TextInputEditText;
 import com.naamini.tenakataapp.R;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.List;
 
 public class RegisterStudentActivity extends AppCompatActivity {
@@ -52,9 +57,13 @@ public class RegisterStudentActivity extends AppCompatActivity {
     public static final String REPLY_LOCATION = "rLocation";
     public static final String REPLY_IMG_PATH = "rImage";
     public static final String REPLY_IQ = "rIq";
+    public static final String REPLY_ADMIT = "rAdmit";
+
     private static final int REQUEST_LOCATION = 101;
     public static String myDateFormat = "yyyy-MM-dd";
     final private int PERMISSION_WRITE_EXTERNAL_CAMERA = 100;
+
+    private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
 
     TextInputEditText etfName, etAge, etMStatus, etHeight, etIQ, etLocation;
     ImageView pImgView;
@@ -62,7 +71,8 @@ public class RegisterStudentActivity extends AppCompatActivity {
     RadioGroup radioGroup;
     RadioButton radioFemale, radioMale;
     Button btnChooseImg, addStudentBtn;
-    String sFName, sAge, sMStatus, sHeight, sIQ, sLocation, sGender;
+    String sFName, sAge, sMStatus, sHeight, sIQ, sLocation, sGender,sImgPath;
+    boolean isAdmitted;
     double lat, lon;
     Intent intent;
     private LocationManager locationManager;
@@ -83,9 +93,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
         initToolbar();
         initComponents();
         handleOnClicks();
-        if (!checkPermission()) {
-            requestPermission();
-        }
+
     }
 
     @Override
@@ -141,30 +149,36 @@ public class RegisterStudentActivity extends AppCompatActivity {
         btnChooseImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
-                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterStudentActivity.this);
-                builder.setTitle("Add Photo!");
-                builder.setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int item) {
-                        if (options[item].equals("Take Photo")) {
-                        } else if (options[item].equals("Choose from Gallery")) {
-                            Intent intent = new Intent();
-                            intent.setAction(Intent.ACTION_PICK);
-                            intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            startActivityForResult(intent, 2);
+                if (!checkPermission()) {
+                    requestPermission();
+                } else {
+                    final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+                    AlertDialog.Builder builder = new AlertDialog.Builder(RegisterStudentActivity.this);
+                    builder.setTitle("Add Photo:");
+                    builder.setItems(options, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int item) {
+                            if (options[item].equals("Take Photo")) {
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                startActivityForResult(intent, REQUEST_CAMERA);
+                            } else if (options[item].equals("Choose from Gallery")) {
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_PICK);
+                                intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                startActivityForResult(intent, 2);
 
-                        } else if (options[item].equals("Cancel")) {
-                            dialog.dismiss();
+                            } else if (options[item].equals("Cancel")) {
+                                dialog.dismiss();
+                            }
                         }
-                    }
-                });
-                builder.show();
+                    });
+                    builder.show();
                /* Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
 */
+                }
             }
         });
         addStudentBtn.setOnClickListener(new View.OnClickListener() {
@@ -172,6 +186,13 @@ public class RegisterStudentActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (validateFields()) {
                     //write new student
+                    if (sLocation.equals("KE") && Integer.parseInt(sIQ)>=100){
+                        isAdmitted=true;
+                    }else if (sMStatus.equalsIgnoreCase("Married")){
+                        isAdmitted=false;
+                    }else {
+                        isAdmitted=false;
+                    }
                     Intent replyIntent = new Intent();
                     replyIntent.putExtra(REPLY_NAME, sFName);
                     replyIntent.putExtra(REPLY_GENDER, sGender);
@@ -179,8 +200,9 @@ public class RegisterStudentActivity extends AppCompatActivity {
                     replyIntent.putExtra(REPLY_STATUS, sMStatus);
                     replyIntent.putExtra(REPLY_HEIGHT, sHeight);
                     replyIntent.putExtra(REPLY_LOCATION, sLocation);
-                    replyIntent.putExtra(REPLY_IMG_PATH, "NEEEEEMMMMMMYYYYYYYYYYY");
+                    replyIntent.putExtra(REPLY_IMG_PATH, sImgPath);
                     replyIntent.putExtra(REPLY_IQ, sIQ);
+                    replyIntent.putExtra(REPLY_ADMIT, isAdmitted);
 
                     setResult(RESULT_OK, replyIntent);
                     finish();
@@ -191,24 +213,57 @@ public class RegisterStudentActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SELECT_FILE)
+                onSelectFromGalleryResult(data);
+            else if (requestCode == REQUEST_CAMERA)
+                onCaptureImageResult(data);
+        }
+    }
+
+    private void onSelectFromGalleryResult(Intent data) {
+
+    }
+
+    private void onCaptureImageResult(Intent data) {
+        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+
+        File destination = new File(Environment.getExternalStorageDirectory(),
+                System.currentTimeMillis() + ".jpg");
+
+        Log.e("File?: ", String.valueOf(destination));
+        sImgPath = String.valueOf(destination);
+
+        FileOutputStream fo;
+        try {
+            destination.createNewFile();
+            fo = new FileOutputStream(destination);
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        pImgView.setImageBitmap(thumbnail);
+        pImgView.setVisibility(View.VISIBLE);
+    }
+
+
     private void OnGPS() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Enable GPS").setCancelable(false).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-            }
-        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        builder.setMessage(R.string.enable_gps).setCancelable(false).setPositiveButton(R.string.yes, (dialog, which) -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))).setNegativeButton(R.string.no, (dialog, which) -> dialog.cancel());
         final AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
 
-    private void getLocation() {//this method works so well
+    private void getLocation() {
         if (ActivityCompat.checkSelfPermission(
                 RegisterStudentActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 RegisterStudentActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -244,7 +299,6 @@ public class RegisterStudentActivity extends AppCompatActivity {
 //                    addresss = gcd.getFromLocation(-1.328664, 36.833734, 1);//KE codes
 
                     String code = addresss.get(0).getCountryCode();
-                    Log.e("codeeee?: ", String.valueOf(code));
                     etLocation.setText(code);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -331,19 +385,18 @@ public class RegisterStudentActivity extends AppCompatActivity {
         }
 
         if ((radioGroup.getCheckedRadioButtonId() == -1)) {
-            radioMale.setError("Choose gender");
-            radioFemale.setError("Choose gender");
+            radioMale.setError(getString(R.string.choose_gender));
+            radioFemale.setError(getString(R.string.choose_gender));
             valid = false;
         } else {
             radioMale.setError(null);
             radioFemale.setError(null);
         }
-/*
-        if (String.valueOf(imgFilePath).isEmpty()){
+
+        if (String.valueOf(sImgPath).isEmpty()){
             Toast.makeText(RegisterStudentActivity.this, R.string.img_required_field, Toast.LENGTH_LONG).show();
             valid = false;
         }
-*/
         return valid;
     }
 

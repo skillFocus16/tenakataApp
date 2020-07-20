@@ -18,11 +18,12 @@ import com.naamini.tenakataapp.model.Student;
 import com.naamini.tenakataapp.model.StudentViewModel;
 
 import java.util.ArrayList;
-import java.util.Date;
 
+import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_ADMIT;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_AGE;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_GENDER;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_HEIGHT;
+import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_IMG_PATH;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_IQ;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_LOCATION;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_NAME;
@@ -92,23 +93,16 @@ public class MainActivity extends AppCompatActivity {
                     data.getStringExtra(REPLY_STATUS),
                     data.getStringExtra(REPLY_HEIGHT),
                     data.getStringExtra(REPLY_LOCATION),
-                    data.getStringExtra("NEMMMYYYYYYYYYYY"),
-                    data.getStringExtra(REPLY_IQ)
+                    data.getStringExtra(REPLY_IMG_PATH),
+                    data.getStringExtra(REPLY_IQ),
+                    data.getStringExtra(REPLY_ADMIT)
                     );
-            /*Student s = new Student();
-            s.setsName(REPLY_NAME);
-            s.setsAge(REPLY_AGE);
-            s.setsMaritalStatus(REPLY_STATUS);
-            s.setsHeight(REPLY_HEIGHT);
-            s.setsLocation(REPLY_LOCATION);
-            s.setsProfileImg("NEMMMMMMMMMY");
-            s.setsCreatedOn(String.valueOf(new Date()));*/
             mStudentViewModel.insert(s);
-            Toast.makeText(MainActivity.this, "SAVED!", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, R.string.reg_success, Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(
                     getApplicationContext(),
-                    "Not saved",
+                    R.string.cancelled,
                     Toast.LENGTH_LONG).show();
         }
     }

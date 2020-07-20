@@ -1,14 +1,19 @@
 package com.naamini.tenakataapp.adapter;
 
 import android.content.Context;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.naamini.tenakataapp.R;
 import com.naamini.tenakataapp.model.Student;
 
@@ -40,10 +45,21 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
            final Student currentStudent = mStudents.get(position);
             holder.studentName.setText(currentStudent.getsName());
             holder.itemViewDesc.setText("Country:"+currentStudent.getsLocation());
-            holder.status.setText("NE:"+currentStudent.getsMaritalStatus());
+            if (currentStudent.getsAdmissibility().equalsIgnoreCase("true")){
+                holder.status.setText("Status: Admitted");
+            }else {
+                holder.status.setTextColor(context.getResources().getColor(R.color.design_default_color_error));
+                holder.status.setText("Status: Not Admitted");
+            }
+
+            Glide.with(context)
+                    .load(currentStudent.getsProfileImg())
+                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                    .apply(RequestOptions.overrideOf(500, 500))
+                    .into(holder.pImg);
         } else {
             // Covers the case of data not being ready yet.
-            holder.studentName.setText("No Student available!");
+            holder.studentName.setText(context.getString(R.string.noStudentAvailable));
         }
     }
 
@@ -68,12 +84,14 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
 
     public class StudentViewHolder extends RecyclerView.ViewHolder {
         public final TextView studentName,itemViewDesc, status;
+        ImageView pImg;
 
         private StudentViewHolder(View itemView) {
             super(itemView);
             studentName = itemView.findViewById(R.id.studentName);
             itemViewDesc = itemView.findViewById(R.id.description);
             status = itemView.findViewById(R.id.status);
+            pImg = itemView.findViewById(R.id.pImg);
         }
     }
 }
