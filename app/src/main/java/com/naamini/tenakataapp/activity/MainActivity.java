@@ -118,17 +118,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void getStudents() {
         mStudentViewModel.getAllStudents().observe(MainActivity.this, students -> {
-//            if (adapter.getItemCount()==0){
-//            if (students.size()==0){
-//                noContentLayout.setVisibility(View.VISIBLE);
-//                viewPdfBtn.setVisibility(View.GONE);
-//            }else {
-//                noContentLayout.setVisibility(View.GONE);
-            viewPdfBtn.setVisibility(View.VISIBLE);
             adapter.setStudents(students);
             adapter.notifyDataSetChanged();
-
-//            }
         });
     }
 
@@ -138,11 +129,25 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(i, NEW_STUDENT_ACTIVITY_REQUEST_CODE);
         });
         viewPdfBtn.setOnClickListener(view -> {
-
-            getScreenshotFromRecyclerView(recyclerView);
-            loadAndOpenPdf();
-
+            if (adapter.getItemCount() != 0) {
+                getScreenshotFromRecyclerView(recyclerView);
+                loadAndOpenPdf();
+            } else {
+                Toast.makeText(MainActivity.this, getString(R.string.noStudentAvailable), Toast.LENGTH_SHORT).show();
+            }
         });
+
+        if (adapter.getItemCount() == 0) {
+            if (adapter.getItemCount() != 0) {
+                noContentLayout.setVisibility(View.VISIBLE);
+                viewPdfBtn.setVisibility(View.GONE);
+            } else {
+                noContentLayout.setVisibility(View.GONE);
+                viewPdfBtn.setVisibility(View.VISIBLE);
+                adapter.setStudents(students);
+                adapter.notifyDataSetChanged();
+            }
+        }
 
     }
 
