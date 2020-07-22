@@ -119,12 +119,13 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(MainActivity.this, RegisterStudentActivity.class);
             startActivityForResult(i, NEW_STUDENT_ACTIVITY_REQUEST_CODE);
         });
-        viewPdfBtn.setOnClickListener(view -> {
-            Intent i = new Intent(MainActivity.this, PDFActivity.class);
-            i.putExtra("students", students);
+      /*  viewPdfBtn.setOnClickListener(view -> {
+//            Intent i = new Intent(MainActivity.this, PDFActivity.class);
+            Intent i = new Intent(MainActivity.this,PDFActivity.class).setAction(s.getsName());;
+//            i.putStringArrayListExtra("students", students);
 //            i.putExtra("filePath", );
             startActivity(i);
-        });
+        });*/
         adapter.setOnItemClickListener((adapterView, view, i, l) -> {
             if (isOnline()) {
                 uploadStudentToFirebase();

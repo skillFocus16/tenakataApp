@@ -1,6 +1,7 @@
 package com.naamini.tenakataapp.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.naamini.tenakataapp.R;
 import com.naamini.tenakataapp.activity.MainActivity;
+import com.naamini.tenakataapp.activity.PDFActivity;
 import com.naamini.tenakataapp.model.Student;
 
 import java.util.List;
@@ -67,7 +69,12 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
                /* uploadImageToFirebase(s,storageReference, Uri.parse(data.getStringExtra(REPLY_IMG_PATH)), profilePath, key);            //send to firebase
 
                 ((MainActivity)context).uploadImageToFirebase(currentStudent,currentStudent.getsProfileImg(),profilePath,currentStudent.getsID());
-*/            });
+*/
+                Intent i = new Intent(context, PDFActivity.class).setAction(currentStudent.getsName());;
+//            i.putStringArrayListExtra("students", students);
+//            i.putExtra("filePath", );
+                context.startActivity(i);
+            });
 
             Glide.with(context)
                     .load(currentStudent.getsProfileImg())
