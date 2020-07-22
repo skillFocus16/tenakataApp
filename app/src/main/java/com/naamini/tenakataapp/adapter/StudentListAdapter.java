@@ -26,9 +26,9 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
     private Context context;
     private AdapterView.OnItemClickListener mOnItemClickListener;
 
-    public StudentListAdapter(Context context,List<Student> students ) {
+    public StudentListAdapter(Context context, List<Student> students) {
         mInflater = LayoutInflater.from(context);
-        this.mStudents =students;
+        this.mStudents = students;
         this.context = context;
     }
 
@@ -46,18 +46,18 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
     @Override
     public void onBindViewHolder(@NonNull StudentViewHolder holder, final int position) {
         if (mStudents != null) {
-           final Student currentStudent = mStudents.get(position);
+            final Student currentStudent = mStudents.get(position);
             holder.studentName.setText(currentStudent.getsName());
-            holder.itemViewDesc.setText("Country: "+currentStudent.getsLocation());
-            if (currentStudent.getsAdmissibility().equalsIgnoreCase("true")){
+            holder.itemViewDesc.setText("Country: " + currentStudent.getsLocation());
+            if (currentStudent.getsAdmissibility().equalsIgnoreCase("true")) {
                 holder.status.setTextColor(context.getResources().getColor(R.color.green));
                 holder.status.setText(R.string.status_admitted);
-            }else {
+            } else {
                 holder.status.setTextColor(context.getResources().getColor(R.color.design_default_color_error));
                 holder.status.setText(R.string.status_not_admitted);
             }
 
-            if(currentStudent.issUploaded()!=null) {
+            if (currentStudent.issUploaded() != null) {
                 if (currentStudent.issUploaded().equalsIgnoreCase("true")) {
                     holder.btnUpload.setVisibility(View.VISIBLE);
                 } else {
@@ -74,12 +74,12 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
         }
     }
 
-    public void setStudents(List<Student> studentList){
+    public void setStudents(List<Student> studentList) {
         mStudents = studentList;
         notifyDataSetChanged();
     }
 
-    public Student getStudentAtPosition (int position) {
+    public Student getStudentAtPosition(int position) {
         return mStudents.get(position);
     }
 
@@ -87,15 +87,19 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
     public int getItemCount() {
         if (mStudents != null)
             return mStudents.size();
-        else{
+        else {
 //            ((MainActivity)context).noContentLayout.setVisibility(View.VISIBLE);
             return 0;
         }
     }
 
+    public interface OnItemClickListener {
+        void onItemClick(View view, Student obj, int pos);
+    }
+
     public class StudentViewHolder extends RecyclerView.ViewHolder {
-        public final TextView studentName,itemViewDesc, status;
-        ImageView pImg,btnUpload;
+        public final TextView studentName, itemViewDesc, status;
+        ImageView pImg, btnUpload;
         LinearLayout lyt_parent;
 
         private StudentViewHolder(View itemView) {
@@ -107,9 +111,5 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
             btnUpload = itemView.findViewById(R.id.btnDone);
             lyt_parent = itemView.findViewById(R.id.lyt_parent);
         }
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(View view, Student obj, int pos);
     }
 }

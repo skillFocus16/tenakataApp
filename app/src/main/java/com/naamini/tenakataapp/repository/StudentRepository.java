@@ -24,18 +24,19 @@ public class StudentRepository {
         mAllStudents = mStudentDao.getAllStudents();
     }
 
-    public LiveData<List<Student>> getAllStudents(){
+    public LiveData<List<Student>> getAllStudents() {
         return mAllStudents;
     }
 
-    public void insert (Student student){
-        StudentDatabaseConfig.databaseWriteExecutor.execute(()->{
+    public void insert(Student student) {
+        StudentDatabaseConfig.databaseWriteExecutor.execute(() -> {
             mStudentDao.insert(student);
         });
     }
-    public void update (String isUploaded, String sName){
-        StudentDatabaseConfig.databaseWriteExecutor.execute(()->{
-            mStudentDao.update(isUploaded,sName);
+
+    public void update(String isUploaded, String sName) {
+        StudentDatabaseConfig.databaseWriteExecutor.execute(() -> {
+            mStudentDao.update(isUploaded, sName);
         });
     }
 }

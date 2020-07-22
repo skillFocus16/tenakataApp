@@ -22,7 +22,7 @@ public class StudentViewModel extends AndroidViewModel {
         mAllStudents = mRepository.getAllStudents();
     }
 
-    public LiveData<List<Student>> getAllStudents(){
+    public LiveData<List<Student>> getAllStudents() {
         return mAllStudents;
     }
 
@@ -31,7 +31,7 @@ public class StudentViewModel extends AndroidViewModel {
     }
 
     public void update(String isUploaded, String sName) {
-        mRepository.update(isUploaded,sName);
+        mRepository.update(isUploaded, sName);
     }
 
 }

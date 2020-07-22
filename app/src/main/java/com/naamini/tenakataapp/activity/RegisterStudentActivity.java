@@ -56,6 +56,7 @@ import java.util.List;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+
 /**
  * Created by Naamini Yonazi on 19/07/20
  */
@@ -71,13 +72,11 @@ public class RegisterStudentActivity extends AppCompatActivity {
     public static final String REPLY_IQ = "rIq";
     public static final String REPLY_ADMIT = "rAdmit";
     public static final String REPLY_IsUPloaded = "rIsUploaded";
-    public static Uri TEMP_URI;
-
     private static final int REQUEST_LOCATION = 101;
     private static final int permsRequestCode = 200;
+    public static Uri TEMP_URI;
     public static int REQUEST_PERMISSION = 103;
-    private int REQUEST_CAMERA = 0;
-
+    public Uri tempUri;
     TextInputEditText etfName, etAge, etMStatus, etHeight, etIQ, etLocation;
     ImageView pImgView;
     ImageButton getMap;
@@ -88,15 +87,23 @@ public class RegisterStudentActivity extends AppCompatActivity {
     String isAdmitted;
     double lat, lon;
     Intent intent;
-    private LocationManager locationManager;
-    public Uri tempUri;
-    private String _realPath;
-
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     FirebaseStorage firebaseStorage;
-    private String refStudents="students";
     MainActivity mainActivity;
+    private int REQUEST_CAMERA = 0;
+    private LocationManager locationManager;
+    private String _realPath;
+    private String refStudents = "students";
+
+    public static void setErrorMsg(String msg, EditText viewId) {
+        int ecolor = Color.WHITE;
+        String estring = msg;
+        ForegroundColorSpan fgcspan = new ForegroundColorSpan(ecolor);
+        SpannableStringBuilder sbuilder = new SpannableStringBuilder(estring);
+        sbuilder.setSpan(fgcspan, 0, estring.length(), 0);
+        viewId.setError(sbuilder);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +130,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
     }
 
     private void initComponents() {
-        mainActivity=new MainActivity();
+        mainActivity = new MainActivity();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference(refStudents);
         databaseReference.keepSynced(true);
@@ -158,7 +165,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
                 } else {
                     getLocation();
                 }
-            }else{
+            } else {
                 Toast.makeText(RegisterStudentActivity.this, R.string.no_internet, Toast.LENGTH_SHORT).show();
             }
         });
@@ -200,7 +207,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
                 replyIntent.putExtra(REPLY_IMG_PATH, _realPath);
                 replyIntent.putExtra(REPLY_IQ, sIQ);
                 replyIntent.putExtra(REPLY_ADMIT, isAdmitted);
-                replyIntent.putExtra(REPLY_IsUPloaded,"false");
+                replyIntent.putExtra(REPLY_IsUPloaded, "false");
 
                 setResult(RESULT_OK, replyIntent);
                 finish();
@@ -271,7 +278,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
 
     /**
      * Location
-    * */
+     */
     private void OnGPS() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.enable_gps).setCancelable(false).setPositiveButton(R.string.yes, (dialog, which) -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))).setNegativeButton(R.string.no, (dialog, which) -> dialog.cancel());
@@ -311,7 +318,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
                 lon = location.getLongitude();
                 List<Address> addresss = null;
                 try {
-                    addresss = gcd.getFromLocation(lat,lon,1);
+                    addresss = gcd.getFromLocation(lat, lon, 1);
 //                    addresss = gcd.getFromLocation(-1.328664, 36.833734, 1);//KE codes
                     String code = addresss.get(0).getCountryCode();
                     etLocation.setText(code);
@@ -324,9 +331,10 @@ public class RegisterStudentActivity extends AppCompatActivity {
             }
         }
     }
+
     /**
      * end ofLocation
-     * */
+     */
     private void requestStoragePermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, READ_EXTERNAL_STORAGE)) {
             new AlertDialog.Builder(this)
@@ -338,7 +346,6 @@ public class RegisterStudentActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
         }
     }
-
 
     private boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
@@ -468,14 +475,5 @@ public class RegisterStudentActivity extends AppCompatActivity {
             valid = false;
         }
         return valid;
-    }
-
-    public static void setErrorMsg(String msg, EditText viewId) {
-        int ecolor = Color.WHITE;
-        String estring = msg;
-        ForegroundColorSpan fgcspan = new ForegroundColorSpan(ecolor);
-        SpannableStringBuilder sbuilder = new SpannableStringBuilder(estring);
-        sbuilder.setSpan(fgcspan, 0, estring.length(), 0);
-        viewId.setError(sbuilder);
     }
 }
