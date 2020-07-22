@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +35,7 @@ import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_GEN
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_HEIGHT;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_IMG_PATH;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_IQ;
+import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_IsUPloaded;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_LOCATION;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_NAME;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_STATUS;
@@ -42,7 +44,7 @@ import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_STA
  */
 public class MainActivity extends AppCompatActivity {
 
-    FloatingActionButton fabNewBtn;
+    FloatingActionButton fabNewBtn,viewPdfBtn;
     RecyclerView recyclerView;
     public TextView noContentLayout;
 
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initComponents();
+        getStudents();
         handleOnClicks();
     }
 
@@ -76,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initComponents() {
         fabNewBtn = findViewById(R.id.fabNewBtn);
+        viewPdfBtn = findViewById(R.id.viewPdfBtn);
         recyclerView = findViewById(R.id.recyclerview);
         noContentLayout = findViewById(R.id.noContentLayout);
 
@@ -93,9 +97,20 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         mStudentViewModel = new ViewModelProvider(MainActivity.this).get(StudentViewModel.class);
+    }
+
+    private void getStudents() {
         mStudentViewModel.getAllStudents().observe(MainActivity.this, students -> {
+//            if (adapter.getItemCount()==0){
+//            if (students.size()==0){
+//                noContentLayout.setVisibility(View.VISIBLE);
+//                viewPdfBtn.setVisibility(View.GONE);
+//            }else {
+//                noContentLayout.setVisibility(View.GONE);
+                viewPdfBtn.setVisibility(View.VISIBLE);
                 adapter.setStudents(students);
                 adapter.notifyDataSetChanged();
+//            }
         });
     }
 
@@ -103,10 +118,12 @@ public class MainActivity extends AppCompatActivity {
         fabNewBtn.setOnClickListener(view -> {
             Intent i = new Intent(MainActivity.this, RegisterStudentActivity.class);
             startActivityForResult(i, NEW_STUDENT_ACTIVITY_REQUEST_CODE);
-           /* Intent i = new Intent(MainActivity.this, PDFActivity.class);
+        });
+        viewPdfBtn.setOnClickListener(view -> {
+            Intent i = new Intent(MainActivity.this, PDFActivity.class);
             i.putExtra("students", students);
 //            i.putExtra("filePath", );
-            startActivity(i);*/
+            startActivity(i);
         });
         adapter.setOnItemClickListener((adapterView, view, i, l) -> {
             if (isOnline()) {
@@ -130,14 +147,19 @@ public class MainActivity extends AppCompatActivity {
                     data.getStringExtra(REPLY_LOCATION),
                     data.getStringExtra(REPLY_IMG_PATH),
                     data.getStringExtra(REPLY_IQ),
-                    data.getStringExtra(REPLY_ADMIT)
+                    data.getStringExtra(REPLY_ADMIT),
+                    data.getStringExtra(REPLY_IsUPloaded)
             );
             mStudentViewModel.insert(s);
             Toast.makeText(MainActivity.this, R.string.reg_success, Toast.LENGTH_SHORT).show();
-
+            getStudents();
             if (isOnline()) {
-                uploadStudentToFirebase();
+                if(s.issUploaded().equalsIgnoreCase("true")){
+                    Toast.makeText(MainActivity.this,"Already uploaded to Firebase", Toast.LENGTH_SHORT).show();
+                }else {
+                    uploadStudentToFirebase();
 //                uploadImageToFirebase(s, storageReference, Uri.parse(data.getStringExtra(REPLY_IMG_PATH)), profilePath, key);            //send to firebase
+                }
             }else{
                 Toast.makeText(MainActivity.this, R.string.no_internet, Toast.LENGTH_SHORT).show();
             }
@@ -176,7 +198,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void uploadStudentToFirebase() {
         databaseReference.child(key).setValue(s)
-                .addOnSuccessListener(aVoid -> Toast.makeText(MainActivity.this, "Firebase Success", Toast.LENGTH_SHORT).show())
+                .addOnSuccessListener(aVoid -> {
+                    s.setsUploaded("true");
+                    Toast.makeText(MainActivity.this, "Firebase Success", Toast.LENGTH_SHORT).show();
+                }
+                )
                 .addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Failed", Toast.LENGTH_LONG).show());
     }
 

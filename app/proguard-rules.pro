@@ -31,3 +31,6 @@
   public *;
 }
 -keep class com.bumptech.glide.GeneratedAppGlideModuleImpl
+
+#pdfViewer
+#-keep class com.shockwave.**

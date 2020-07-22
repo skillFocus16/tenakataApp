@@ -1,18 +1,37 @@
 package com.naamini.tenakataapp.activity;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.listener.OnErrorListener;
+import com.google.firebase.database.annotations.NotNull;
 import com.naamini.tenakataapp.R;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
+import android.print.PrintAttributes;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.itextpdf.text.BaseColor;
@@ -26,6 +45,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
+import com.uttampanchasara.pdfgenerator.CreatePdf;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,13 +59,38 @@ import java.io.File;
 public class PDFActivity extends AppCompatActivity {
 
     Context mContext;
+    private int PDF_SELECTION_CODE =99;
+    String prevInterntData;
+    PDFView pdfView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_p_d_f);
         mContext = getApplicationContext();
+        pdfView = findViewById(R.id.pdfView);
 
+      /*  Intent i = getIntent();
+        prevInterntData=i.getStringExtra("");
+      */  createPdf();
+        pdfView.fromFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/tenakata"+ "/" + "Tenakata PDF Report"))
+                .enableSwipe(true) // allows to block changing pages using swipe
+                .swipeHorizontal(false)
+//                .pageSnap(true)
+//                .autoSpacing(true)
+//                .pageFling(true)
+                        .enableDoubletap(true)
+                        .defaultPage(0)
+                .onError(new OnErrorListener() {
+                    @Override
+                    public void onError(Throwable t) {
+//                        if(file)
+                    }
+                }).enableAntialiasing(true).spacing(10)
+                .load();
+
+//        viewPdf("Tenakata PDF Report","/MyPdf");
+//        createandDisplayPdf("NAamini");
        /* checker = new PermissionsChecker(this);
 
         createPdf(FileUtils.getAppPath(mContext) + "tenakata.pdf");
@@ -187,4 +232,106 @@ public class PDFActivity extends AppCompatActivity {
         }
     }*/
     }
+/*
+
+    public void createandDisplayPdf(String text) {
+
+        Document doc = new Document();
+
+        try {
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Dir";
+
+            File dir = new File(path);
+            if(!dir.exists())
+                dir.mkdirs();
+
+            File file = new File(dir, "tenakata.pdf");
+            FileOutputStream fOut = new FileOutputStream(file);
+
+            PdfWriter.getInstance(doc, fOut);
+
+            //open the document
+            doc.open();
+
+            Paragraph p1 = new Paragraph(text);
+//            Font paraFont= new Font(Font.COURIER);
+            p1.setAlignment(Paragraph.ALIGN_CENTER);
+//            p1.setFont(paraFont);
+
+            //add paragraph to document
+            doc.add(p1);
+
+        } catch (DocumentException de) {
+            Log.e("PDFCreator", "DocumentException:" + de);
+        } catch (IOException e) {
+            Log.e("PDFCreator", "ioException:" + e);
+        }
+        finally {
+            doc.close();
+        }
+
+        viewPdf("tenakata.pdf", "Dir");
+    }
+*/
+
+    // Method for opening a pdf file
+    private void viewPdf(String file, String directory) {
+        File pdfFile = new File(Environment.getExternalStorageDirectory() + "/" + directory + "/" + file);
+        Uri path = Uri.fromFile(pdfFile);
+
+        // Setting the intent for pdf reader
+        Intent pdfIntent = new Intent(Intent.ACTION_VIEW);
+        pdfIntent.setDataAndType(path, "application/pdf");
+        pdfIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        try {
+            startActivity(pdfIntent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(PDFActivity.this, "Can't read pdf file", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void createPdf(){
+            new CreatePdf(this)
+                    .setPdfName("Tenakata PDF Report")
+                    .openPrintDialog(false)
+                    .setContentBaseUrl(null)
+                    .setPageSize(PrintAttributes.MediaSize.ISO_A4)
+                    .setContent("Your Content")
+                    .setFilePath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/tenakata")
+                    .setCallbackListener(new CreatePdf.PdfCallbackListener() {
+                        @Override
+                        public void onFailure(@NotNull String s) {
+                            // handle error
+                        }
+
+                        @Override
+                        public void onSuccess(@NotNull String s) {
+                            // do your stuff here
+                        }
+                    })
+                    .create();
+    }
+
+    public void selectPDFFromStorage(Uri path){
+        Intent pdfIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        pdfIntent.setDataAndType(path, "application/pdf");
+        pdfIntent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(
+                Intent.createChooser(pdfIntent, "Select PDF"), PDF_SELECTION_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PDF_SELECTION_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            Uri selectedPdfFromStorage = data.getData();
+            showPdfFromUri(selectedPdfFromStorage);
+        }
+    }
+
+    private void showPdfFromUri(Uri selectedPdfFromStorage) {
+//        PDf
+    }
+
 }

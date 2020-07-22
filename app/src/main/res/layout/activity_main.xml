@@ -25,14 +25,32 @@
         android:textStyle="bold"
         android:textAllCaps="true" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabNewBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:tint="@android:color/black"
-        android:background="@color/colorPrimary"
-        android:src="@drawable/ic_person_add" />
+   <RelativeLayout
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_gravity="bottom|end">
+       <com.google.android.material.floatingactionbutton.FloatingActionButton
+           android:id="@+id/fabNewBtn"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_gravity="bottom|end"
+           android:layout_margin="@dimen/fab_margin"
+           android:tint="@android:color/black"
+           android:background="@color/colorPrimary"
+           android:src="@drawable/ic_person_add" />
+
+       <com.google.android.material.floatingactionbutton.FloatingActionButton
+           android:id="@+id/viewPdfBtn"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_gravity="bottom|end"
+           android:layout_below="@+id/fabNewBtn"
+           android:layout_marginBottom="@dimen/fab_margin"
+           android:layout_marginRight="@dimen/fab_margin"
+           android:layout_marginLeft="@dimen/fab_margin"
+           android:tint="@android:color/black"
+           android:background="@color/colorPrimary"
+           android:src="@android:drawable/ic_menu_view" />
+   </RelativeLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

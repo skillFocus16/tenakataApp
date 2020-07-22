@@ -70,7 +70,8 @@ public class RegisterStudentActivity extends AppCompatActivity {
     public static final String REPLY_IMG_PATH = "rImage";
     public static final String REPLY_IQ = "rIq";
     public static final String REPLY_ADMIT = "rAdmit";
-    public static  Uri TEMP_URI;
+    public static final String REPLY_IsUPloaded = "rIsUploaded";
+    public static Uri TEMP_URI;
 
     private static final int REQUEST_LOCATION = 101;
     private static final int permsRequestCode = 200;
@@ -199,6 +200,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
                 replyIntent.putExtra(REPLY_IMG_PATH, _realPath);
                 replyIntent.putExtra(REPLY_IQ, sIQ);
                 replyIntent.putExtra(REPLY_ADMIT, isAdmitted);
+                replyIntent.putExtra(REPLY_IsUPloaded,"false");
 
                 setResult(RESULT_OK, replyIntent);
                 finish();
@@ -267,6 +269,9 @@ public class RegisterStudentActivity extends AppCompatActivity {
         return cursor.getString(idx);
     }
 
+    /**
+     * Location
+    * */
     private void OnGPS() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.enable_gps).setCancelable(false).setPositiveButton(R.string.yes, (dialog, which) -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))).setNegativeButton(R.string.no, (dialog, which) -> dialog.cancel());
@@ -319,7 +324,9 @@ public class RegisterStudentActivity extends AppCompatActivity {
             }
         }
     }
-
+    /**
+     * end ofLocation
+     * */
     private void requestStoragePermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, READ_EXTERNAL_STORAGE)) {
             new AlertDialog.Builder(this)
