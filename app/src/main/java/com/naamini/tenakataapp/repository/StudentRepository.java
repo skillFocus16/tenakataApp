@@ -33,4 +33,9 @@ public class StudentRepository {
             mStudentDao.insert(student);
         });
     }
+    public void update (String isUploaded, String sName){
+        StudentDatabaseConfig.databaseWriteExecutor.execute(()->{
+            mStudentDao.update(isUploaded,sName);
+        });
+    }
 }

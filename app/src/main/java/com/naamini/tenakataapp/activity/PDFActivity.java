@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.google.firebase.database.annotations.NotNull;
@@ -38,18 +39,29 @@ public class PDFActivity extends AppCompatActivity {
         try {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_p_d_f);
-            mContext = getApplicationContext();
+            initToolbar();
             initComponents();
             createPdf();
             /*viewing pdf: 2 methods*/
+            viewPDFWithinApp();
 //            viewPDFWithAnotherApp();
-            viewPdfWithinApp();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 
+    private void initToolbar() {
+        getSupportActionBar().setTitle(R.string.view_pdf);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
     private void initComponents() {
+        mContext = getApplicationContext();
         pdfView = findViewById(R.id.pdfView);
 
         Intent intent = getIntent();
@@ -91,7 +103,7 @@ public class PDFActivity extends AppCompatActivity {
     /**
      * Method for opening a pdf file within the App
      */
-    private void viewPDFWithAnotherApp() {
+    private void viewPDFWithinApp() {
         try {
             File pdfFile = new File(filePath + "/" + pdfFileName + pdfExtension);
             newUriPath = Uri.fromFile(pdfFile);
@@ -120,7 +132,7 @@ public class PDFActivity extends AppCompatActivity {
     /**
      * Method for opening a pdf file with another App
      */
-    private void viewPdfWithinApp() {
+    private void viewPDFWithAnotherApp() {
         File pdfFile = new File(filePath + "/" + pdfFileName + pdfExtension);
         newUriPath = Uri.fromFile(pdfFile);
 

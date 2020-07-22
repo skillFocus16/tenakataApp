@@ -5,6 +5,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.naamini.tenakataapp.model.Student;
 
@@ -18,6 +19,9 @@ public interface StudentDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(Student student);
+
+    @Query("UPDATE student_table SET sUploaded=:isUploaded WHERE student=:sName ")
+    void update(String isUploaded, String sName);
 
     @Query("SELECT * from student_table ORDER BY admissibility DESC")//ORDER BY student ASC")
     LiveData<List<Student>> getAllStudents();

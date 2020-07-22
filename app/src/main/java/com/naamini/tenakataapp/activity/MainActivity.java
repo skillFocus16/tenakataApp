@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -119,20 +120,30 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(MainActivity.this, RegisterStudentActivity.class);
             startActivityForResult(i, NEW_STUDENT_ACTIVITY_REQUEST_CODE);
         });
-      /*  viewPdfBtn.setOnClickListener(view -> {
+        viewPdfBtn.setOnClickListener(view -> {
 //            Intent i = new Intent(MainActivity.this, PDFActivity.class);
-            Intent i = new Intent(MainActivity.this,PDFActivity.class).setAction(s.getsName());;
+            Intent i = new Intent(MainActivity.this,PDFActivity.class).setAction("Naamini YOnazi");//s.getsName());
 //            i.putStringArrayListExtra("students", students);
 //            i.putExtra("filePath", );
             startActivity(i);
-        });*/
+        });
         adapter.setOnItemClickListener((adapterView, view, i, l) -> {
+            Log.e("dfgh?:",students.get(i).issUploaded());
+            if (!students.get(i).issUploaded().equalsIgnoreCase("true")){
             if (isOnline()) {
                 uploadStudentToFirebase();
 //                uploadImageToFirebase(s,storageReference, TEMP_URI, profilePath, key);
             }else{
                 Toast.makeText(MainActivity.this, R.string.no_internet, Toast.LENGTH_SHORT).show();
             }
+            }else {
+                Toast.makeText(MainActivity.this, "Already uploaded to firebase", Toast.LENGTH_SHORT).show();
+            }
+           /* Intent intent = new Intent(MainActivity.this, PDFActivity.class).setAction(students.get(i).getsName());;
+//            i.putStringArrayListExtra("students", students);
+//            i.putExtra("filePath", );
+            startActivity(intent);*/
+
         });
     }
 
@@ -197,10 +208,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void uploadStudentToFirebase() {
+    public void uploadStudentToFirebase() {
+        s.setsUploaded("true");//writing to firebase
         databaseReference.child(key).setValue(s)
                 .addOnSuccessListener(aVoid -> {
-                    s.setsUploaded("true");
+                    mStudentViewModel.update("true",s.getsName());//updating room
                     Toast.makeText(MainActivity.this, "Firebase Success", Toast.LENGTH_SHORT).show();
                 }
                 )

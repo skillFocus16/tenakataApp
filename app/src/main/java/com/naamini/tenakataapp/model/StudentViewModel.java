@@ -30,4 +30,8 @@ public class StudentViewModel extends AndroidViewModel {
         mRepository.insert(student);
     }
 
+    public void update(String isUploaded, String sName) {
+        mRepository.update(isUploaded,sName);
+    }
+
 }
