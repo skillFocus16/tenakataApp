@@ -1,5 +1,8 @@
 package com.naamini.tenakataapp.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -10,7 +13,7 @@ import androidx.room.PrimaryKey;
  * Created by Naamini Yonazi on 19/07/20
  */
 @Entity(tableName = "student_table")
-public class Student {
+public class Student implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     public int sID;
@@ -53,6 +56,32 @@ public class Student {
         this.sAdmissibility = sAdmissibility;
         this.sUploaded= sUploaded;
     }
+
+    protected Student(Parcel in) {
+        sID = in.readInt();
+        sName = in.readString();
+        gender = in.readString();
+        sAge = in.readString();
+        sMaritalStatus = in.readString();
+        sHeight = in.readString();
+        sLocation = in.readString();
+        sProfileImg = in.readString();
+        sIqTest = in.readString();
+        sAdmissibility = in.readString();
+        sUploaded = in.readString();
+    }
+
+    public static final Creator<Student> CREATOR = new Creator<Student>() {
+        @Override
+        public Student createFromParcel(Parcel in) {
+            return new Student(in);
+        }
+
+        @Override
+        public Student[] newArray(int size) {
+            return new Student[size];
+        }
+    };
 
     public int getsID() {
         return sID;
@@ -143,5 +172,25 @@ public class Student {
 
     public void setsUploaded(String sUploaded) {
         this.sUploaded = sUploaded;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(sID);
+        parcel.writeString(sName);
+        parcel.writeString(gender);
+        parcel.writeString(sAge);
+        parcel.writeString(sMaritalStatus);
+        parcel.writeString(sHeight);
+        parcel.writeString(sLocation);
+        parcel.writeString(sProfileImg);
+        parcel.writeString(sIqTest);
+        parcel.writeString(sAdmissibility);
+        parcel.writeString(sUploaded);
     }
 }

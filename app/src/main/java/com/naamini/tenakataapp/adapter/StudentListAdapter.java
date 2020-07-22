@@ -24,9 +24,7 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
     private final LayoutInflater mInflater;
     private List<Student> mStudents;
     private Context context;
-    String profilePath;
     private AdapterView.OnItemClickListener mOnItemClickListener;
-//private OnItemClickListener mOnItemClickListener;
 
     public StudentListAdapter(Context context,List<Student> students ) {
         mInflater = LayoutInflater.from(context);
@@ -37,13 +35,6 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
     public void setOnItemClickListener(final AdapterView.OnItemClickListener mItemClickListener) {
         this.mOnItemClickListener = mItemClickListener;
     }
-
-
-/*
-    public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
-        this.mOnItemClickListener = mItemClickListener;
-    }
-*/
 
     @NonNull
     @Override
@@ -73,35 +64,12 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
                     holder.btnUpload.setVisibility(View.GONE);
                 }
             }
-            holder.lyt_parent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                }
-            });
-           /* holder.btnUpload.setOnClickListener(view -> {
-                if (((MainActivity)context).isOnline()) {
-                    ((MainActivity)context).uploadStudentToFirebase();
-                }else{
-                    Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
-                }
-            });*/
-               /* uploadImageToFirebase(s,storageReference, Uri.parse(data.getStringExtra(REPLY_IMG_PATH)), profilePath, key);            //send to firebase
-
-                ((MainActivity)context).uploadImageToFirebase(currentStudent,currentStudent.getsProfileImg(),profilePath,currentStudent.getsID());
-*/
-               /* Intent i = new Intent(context, PDFActivity.class).setAction(currentStudent.getsName());;
-//            i.putStringArrayListExtra("students", students);
-//            i.putExtra("filePath", );
-                context.startActivity(i);*/
-
             Glide.with(context)
                     .load(currentStudent.getsProfileImg())
                     .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                     .apply(RequestOptions.overrideOf(500, 500))
                     .into(holder.pImg);
         } else {
-            // Covers the case of data not being ready yet.
             holder.studentName.setText(context.getString(R.string.noStudentAvailable));
         }
     }
