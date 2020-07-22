@@ -27,6 +27,7 @@ import com.naamini.tenakataapp.adapter.StudentListAdapter;
 import com.naamini.tenakataapp.model.Student;
 import com.naamini.tenakataapp.model.StudentViewModel;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -40,26 +41,25 @@ import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_IsU
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_LOCATION;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_NAME;
 import static com.naamini.tenakataapp.activity.RegisterStudentActivity.REPLY_STATUS;
+
 /**
  * Created by Naamini Yonazi on 19/07/20
  */
 public class MainActivity extends AppCompatActivity {
 
-    FloatingActionButton fabNewBtn,viewPdfBtn;
-    RecyclerView recyclerView;
     public TextView noContentLayout;
-
-    private StudentViewModel mStudentViewModel;
-    private int NEW_STUDENT_ACTIVITY_REQUEST_CODE=1;
-    private StudentListAdapter adapter;
+    public String profilePath = "images/profile/";
+    FloatingActionButton fabNewBtn, viewPdfBtn;
+    RecyclerView recyclerView;
     ArrayList<Student> students;
-
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     FirebaseStorage firebaseStorage;
     StorageReference storageReference;
-    private String refStudents="students";
-    public String profilePath = "images/profile/";
+    private StudentViewModel mStudentViewModel;
+    private int NEW_STUDENT_ACTIVITY_REQUEST_CODE = 1;
+    private StudentListAdapter adapter;
+    private String refStudents = "students";
     private Student s;
     private String key, imgPath;
 
@@ -108,9 +108,9 @@ public class MainActivity extends AppCompatActivity {
 //                viewPdfBtn.setVisibility(View.GONE);
 //            }else {
 //                noContentLayout.setVisibility(View.GONE);
-                viewPdfBtn.setVisibility(View.VISIBLE);
-                adapter.setStudents(students);
-                adapter.notifyDataSetChanged();
+            viewPdfBtn.setVisibility(View.VISIBLE);
+            adapter.setStudents(students);
+            adapter.notifyDataSetChanged();
 //            }
         });
     }
@@ -122,29 +122,37 @@ public class MainActivity extends AppCompatActivity {
         });
         viewPdfBtn.setOnClickListener(view -> {
 //            Intent i = new Intent(MainActivity.this, PDFActivity.class);
-            Intent i = new Intent(MainActivity.this,PDFActivity.class).setAction("Naamini YOnazi");//s.getsName());
+            Intent i = new Intent(MainActivity.this, PDFActivity.class).setAction("Naamini YOnazi");//s.getsName());
 //            i.putStringArrayListExtra("students", students);
 //            i.putExtra("filePath", );
             startActivity(i);
         });
-        adapter.setOnItemClickListener((adapterView, view, i, l) -> {
-            Log.e("dfgh?:",students.get(i).issUploaded());
-            if (!students.get(i).issUploaded().equalsIgnoreCase("true")){
+        /*adapter.setOnItemClickListener(new StudentListAdapter.OnItemClickListener() {
+                                           @Override
+                                           public void onItemClick(View view, Student obj, int pos) {
+                                                           Log.e("dfgh?:", obj.issUploaded());
+
+                                               uploadImageToFirebase(storageReference,Uri.parse(obj.getsProfileImg()), profilePath, key);
+
+                                           }
+                                       });*/
+     /*   adapter.setOnItemClickListener((adapterView, view, i, l) -> {
+            Log.e("dfgh?:", adapter.getStudentAtPosition(i).issUploaded());
+
             if (isOnline()) {
-                uploadStudentToFirebase();
-//                uploadImageToFirebase(s,storageReference, TEMP_URI, profilePath, key);
-            }else{
+//                uploadStudentToFirebase();
+                uploadImageToFirebase(storageReference, Uri.parse(students.get(i).getsProfileImg()), profilePath, key);
+            } else {
                 Toast.makeText(MainActivity.this, R.string.no_internet, Toast.LENGTH_SHORT).show();
             }
-            }else {
-                Toast.makeText(MainActivity.this, "Already uploaded to firebase", Toast.LENGTH_SHORT).show();
-            }
-           /* Intent intent = new Intent(MainActivity.this, PDFActivity.class).setAction(students.get(i).getsName());;
+//            Log.e("dfgh?:", students.get(i).issUploaded());
+
+                Intent intent = new Intent(MainActivity.this, PDFActivity.class).setAction(students.get(i).getsName());;
 //            i.putStringArrayListExtra("students", students);
 //            i.putExtra("filePath", );
-            startActivity(intent);*/
+            startActivity(intent);
 
-        });
+        });*/
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -152,8 +160,8 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == NEW_STUDENT_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             key = databaseReference.child(refStudents).push().getKey();
             s = new Student(data.getStringExtra(REPLY_NAME),
-                    data.getStringExtra(REPLY_GENDER ),
-                    data.getStringExtra(REPLY_AGE ),
+                    data.getStringExtra(REPLY_GENDER),
+                    data.getStringExtra(REPLY_AGE),
                     data.getStringExtra(REPLY_STATUS),
                     data.getStringExtra(REPLY_HEIGHT),
                     data.getStringExtra(REPLY_LOCATION),
@@ -166,13 +174,12 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, R.string.reg_success, Toast.LENGTH_SHORT).show();
             getStudents();
             if (isOnline()) {
-                if(s.issUploaded().equalsIgnoreCase("true")){
-                    Toast.makeText(MainActivity.this,"Already uploaded to Firebase", Toast.LENGTH_SHORT).show();
-                }else {
+                if (s.issUploaded().equalsIgnoreCase("true")) {
+                    Toast.makeText(MainActivity.this, "Already uploaded to Firebase", Toast.LENGTH_SHORT).show();
+                } else {
                     uploadStudentToFirebase();
-//                uploadImageToFirebase(s, storageReference, Uri.parse(data.getStringExtra(REPLY_IMG_PATH)), profilePath, key);            //send to firebase
                 }
-            }else{
+            } else {
                 Toast.makeText(MainActivity.this, R.string.no_internet, Toast.LENGTH_SHORT).show();
             }
         } else {
@@ -183,21 +190,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void uploadImageToFirebase(Student s,final StorageReference storageReference, Uri filePath, final String storagePath, final String key) {
+    private void uploadImageToFirebase(final StorageReference storageReference, Uri filePath, final String storagePath, final String key) {
         if (filePath != null) {
             final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            StorageReference ref = storageReference.child(storagePath + key + UUID.randomUUID().toString());
+            StorageReference ref = storageReference.child(storagePath + key + "_" + UUID.randomUUID().toString());
             ref.putFile(filePath)
                     .addOnSuccessListener(taskSnapshot -> {
                         progressDialog.dismiss();
                         Toast.makeText(MainActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                       uploadStudentToFirebase();
                     })
                     .addOnFailureListener(e -> {
                         progressDialog.dismiss();
+                        Log.e("errorUP?:", e.toString());
                         Toast.makeText(MainActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     })
                     .addOnProgressListener(taskSnapshot -> {
@@ -212,9 +219,10 @@ public class MainActivity extends AppCompatActivity {
         s.setsUploaded("true");//writing to firebase
         databaseReference.child(key).setValue(s)
                 .addOnSuccessListener(aVoid -> {
-                    mStudentViewModel.update("true",s.getsName());//updating room
-                    Toast.makeText(MainActivity.this, "Firebase Success", Toast.LENGTH_SHORT).show();
-                }
+                            mStudentViewModel.update("true", s.getsName());//updating room
+                            Toast.makeText(MainActivity.this, "Firebase Success", Toast.LENGTH_SHORT).show();
+                            uploadImageToFirebase(storageReference, Uri.fromFile(new File(s.getsProfileImg())), profilePath, key);
+                        }
                 )
                 .addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Failed", Toast.LENGTH_LONG).show());
     }

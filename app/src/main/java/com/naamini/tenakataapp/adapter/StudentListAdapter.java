@@ -26,6 +26,7 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
     private Context context;
     String profilePath;
     private AdapterView.OnItemClickListener mOnItemClickListener;
+//private OnItemClickListener mOnItemClickListener;
 
     public StudentListAdapter(Context context,List<Student> students ) {
         mInflater = LayoutInflater.from(context);
@@ -37,6 +38,12 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
         this.mOnItemClickListener = mItemClickListener;
     }
 
+
+/*
+    public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mOnItemClickListener = mItemClickListener;
+    }
+*/
 
     @NonNull
     @Override
@@ -66,6 +73,12 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
                     holder.btnUpload.setVisibility(View.GONE);
                 }
             }
+            holder.lyt_parent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
            /* holder.btnUpload.setOnClickListener(view -> {
                 if (((MainActivity)context).isOnline()) {
                     ((MainActivity)context).uploadStudentToFirebase();
@@ -81,8 +94,6 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
 //            i.putStringArrayListExtra("students", students);
 //            i.putExtra("filePath", );
                 context.startActivity(i);*/
-
-
 
             Glide.with(context)
                     .load(currentStudent.getsProfileImg())
@@ -128,5 +139,9 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
             btnUpload = itemView.findViewById(R.id.btnDone);
             lyt_parent = itemView.findViewById(R.id.lyt_parent);
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, Student obj, int pos);
     }
 }
